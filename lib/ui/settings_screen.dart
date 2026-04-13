@@ -41,22 +41,31 @@ class SettingsScreen extends StatelessWidget {
               ),
         ),
         const SizedBox(height: 16),
-        DropdownButtonFormField<ThemeMode>(
-          decoration: const InputDecoration(
-            labelText: 'Theme Mode',
-            border: OutlineInputBorder(),
+        SizedBox(
+          width: double.infinity,
+          child: SegmentedButton<ThemeMode>(
+            segments: const [
+              ButtonSegment<ThemeMode>(
+                value: ThemeMode.system,
+                label: Text('System'),
+                icon: Icon(Icons.brightness_auto),
+              ),
+              ButtonSegment<ThemeMode>(
+                value: ThemeMode.light,
+                label: Text('Light'),
+                icon: Icon(Icons.light_mode),
+              ),
+              ButtonSegment<ThemeMode>(
+                value: ThemeMode.dark,
+                label: Text('Dark'),
+                icon: Icon(Icons.dark_mode),
+              ),
+            ],
+            selected: {settingsNotifier.themeMode},
+            onSelectionChanged: (Set<ThemeMode> newSelection) {
+              settingsNotifier.updateThemeMode(newSelection.first);
+            },
           ),
-          value: settingsNotifier.themeMode,
-          items: const [
-            DropdownMenuItem(value: ThemeMode.system, child: Text('System')),
-            DropdownMenuItem(value: ThemeMode.light, child: Text('Light')),
-            DropdownMenuItem(value: ThemeMode.dark, child: Text('Dark')),
-          ],
-          onChanged: (value) {
-            if (value != null) {
-              settingsNotifier.updateThemeMode(value);
-            }
-          },
         ),
         const SizedBox(height: 16),
       ],
