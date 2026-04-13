@@ -6,9 +6,9 @@ class BibleApi {
 
   BibleApi({http.Client? client}) : client = client ?? http.Client();
 
-  Future<String> fetchPassage(String reference) async {
+  Future<String> fetchPassage(String reference, {String translation = 'web'}) async {
     final encodedReference = Uri.encodeComponent(reference);
-    final response = await client.get(Uri.parse('https://bible-api.com/$encodedReference'));
+    final response = await client.get(Uri.parse('https://bible-api.com/$encodedReference?translation=$translation'));
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);

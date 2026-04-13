@@ -14,8 +14,8 @@ void main() {
       final client = MockClient();
       final api = LitCalApi(client: client);
 
-      when(client.get(Uri.parse('https://litcal.johnromanodorazio.com/api/v3/')))
-          .thenAnswer((_) async => http.Response('{"litcal": {"2024-01-01": [{"name": "Mary, Mother of God", "color": "white"}]}}', 200));
+      when(client.get(Uri.parse('https://litcal.johnromanodorazio.com/api/v5/calendar')))
+          .thenAnswer((_) async => http.Response('{"LitCal": {"2024-01-01": [{"name": "Mary, Mother of God", "color": "white"}]}}', 200));
 
       final data = await api.fetchTodayData();
 
@@ -28,7 +28,7 @@ void main() {
       final client = MockClient();
       final api = LitCalApi(client: client);
 
-      when(client.get(Uri.parse('https://litcal.johnromanodorazio.com/api/v3/')))
+      when(client.get(Uri.parse('https://litcal.johnromanodorazio.com/api/v5/calendar')))
           .thenAnswer((_) async => http.Response('Not Found', 404));
 
       expect(() => api.fetchTodayData(), throwsException);
@@ -43,7 +43,7 @@ void main() {
       final ref = 'John 3:16';
       final encodedRef = Uri.encodeComponent(ref);
 
-      when(client.get(Uri.parse('https://bible-api.com/$encodedRef')))
+      when(client.get(Uri.parse('https://bible-api.com/$encodedRef?translation=web')))
           .thenAnswer((_) async => http.Response('{"reference": "John 3:16", "text": "For God so loved the world..."}', 200));
 
       final text = await api.fetchPassage(ref);
@@ -58,7 +58,7 @@ void main() {
       final ref = 'Invalid 1:1';
       final encodedRef = Uri.encodeComponent(ref);
 
-      when(client.get(Uri.parse('https://bible-api.com/$encodedRef')))
+      when(client.get(Uri.parse('https://bible-api.com/$encodedRef?translation=web')))
           .thenAnswer((_) async => http.Response('Not Found', 404));
 
       expect(() => api.fetchPassage(ref), throwsException);

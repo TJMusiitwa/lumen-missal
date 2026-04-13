@@ -4,24 +4,47 @@ import 'package:google_fonts/google_fonts.dart';
 import 'database/database.dart';
 import 'state/reading_notifier.dart';
 import 'theme/color_mapper.dart';
+import 'settings/settings_service.dart';
+import 'settings/settings_notifier.dart';
+import 'ui/settings_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   final database = AppDatabase();
-  final readingNotifier = ReadingNotifier(database: database);
-  runApp(MyApp(notifier: readingNotifier));
+  final settingsService = SettingsService();
+  final settingsNotifier = SettingsNotifier(settingsService: settingsService);
+
+  // Load settings before running app
+  await settingsNotifier.loadSettings();
+
+  final readingNotifier = ReadingNotifier(
+    database: database,
+    settingsNotifier: settingsNotifier,
+  );
+
+  runApp(MyApp(
+    readingNotifier: readingNotifier,
+    settingsNotifier: settingsNotifier,
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  final ReadingNotifier notifier;
+  final ReadingNotifier readingNotifier;
+  final SettingsNotifier settingsNotifier;
 
-  const MyApp({super.key, required this.notifier});
+  const MyApp({
+    super.key,
+    required this.readingNotifier,
+    required this.settingsNotifier,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: notifier,
+      listenable: Listenable.merge([readingNotifier, settingsNotifier]),
       builder: (context, child) {
-        final liturgicalColorName = notifier.data?.liturgicalColorName ?? 'green';
+        final liturgicalColorName = readingNotifier.data?.liturgicalColorName ?? 'green';
         final seedColor = mapLiturgicalColor(liturgicalColorName);
 
         final textTheme = TextTheme(
@@ -34,7 +57,7 @@ class MyApp extends StatelessWidget {
 
         return MaterialApp(
           title: 'Lumen Missal',
-          themeMode: ThemeMode.system,
+          themeMode: settingsNotifier.themeMode,
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: seedColor,
@@ -59,7 +82,10 @@ class MyApp extends StatelessWidget {
               foregroundColor: seedColor,
             ),
           ),
-          home: ReadingScreen(notifier: notifier),
+          home: ReadingScreen(
+            notifier: readingNotifier,
+            settingsNotifier: settingsNotifier,
+          ),
         );
       },
     );
@@ -68,8 +94,13 @@ class MyApp extends StatelessWidget {
 
 class ReadingScreen extends StatefulWidget {
   final ReadingNotifier notifier;
+  final SettingsNotifier settingsNotifier;
 
-  const ReadingScreen({super.key, required this.notifier});
+  const ReadingScreen({
+    super.key,
+    required this.notifier,
+    required this.settingsNotifier,
+  });
 
   @override
   State<ReadingScreen> createState() => _ReadingScreenState();
@@ -89,6 +120,21 @@ class _ReadingScreenState extends State<ReadingScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Daily Readings'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsScreen(
+                    settingsNotifier: widget.settingsNotifier,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: ListenableBuilder(
         listenable: widget.notifier,
