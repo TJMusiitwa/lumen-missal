@@ -1,0 +1,70 @@
+name: Deploy Lumen Missal Extension
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate build runner files
+        run: dart run build_runner build -d
+
+      - name: Analyze code
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Build WebAssembly Extension
+        run: flutter build web --release --wasm
+
+      - name: Compile Drift Worker
+        run: dart compile js web/worker.dart -o build/web/worker.dart.js
+
+      - name: Package Chrome Extension
+        run: |
+          cd build/web
+          zip -r ../../extension-chrome.zip .
+          cd ../..
+
+      - name: Sign Firefox Addon
+        id: sign_firefox
+        uses: mozilla/add-on-action@v1
+        with:
+          extension: build/web
+          api-key: ${{ secrets.FIREFOX_API_KEY }}
+          api-secret: ${{ secrets.FIREFOX_API_SECRET }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            extension-chrome.zip
+            ${{ steps.sign_firefox.outputs.xpi-path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload to Chrome Web Store
+        uses: m-f-m-f/chrome-extension-upload@v1
+        with:
+          extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
+          client-id: ${{ secrets.CLIENT_ID }}
+          client-secret: ${{ secrets.CLIENT_SECRET }}
+          refresh-token: ${{ secrets.REFRESH_TOKEN }}
+          zip-path: extension-chrome.zip
+          publish: true

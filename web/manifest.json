@@ -1,0 +1,30 @@
+{
+    "manifest_version": 3,
+    "name": "Lumen Missal",
+    "short_name": "Lumen Missal",
+    "version": "1.0.0",
+    "description": "Daily Catholic liturgical readings.",
+    "action": {
+        "default_popup": "index.html"
+    },
+    "icons": {
+        "192": "icons/Icon-192.png",
+        "512": "icons/Icon-512.png"
+    },
+    "permissions": [
+        "storage"
+    ],
+    "host_permissions": [
+        "https://litcal.johnromanodorazio.com/*",
+        "https://bible-api.com/*"
+    ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+    },
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "liturgical-calendar@open-source.org",
+            "strict_min_version": "109.0"
+        }
+    }
+}
