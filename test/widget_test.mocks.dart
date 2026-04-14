@@ -4,16 +4,17 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i5;
-import 'dart:ui' as _i10;
+import 'dart:ui' as _i11;
 
 import 'package:drift/drift.dart' as _i3;
 import 'package:drift/src/runtime/executor/stream_queries.dart' as _i4;
 import 'package:lumen_missal/api/bible_api.dart' as _i7;
 import 'package:lumen_missal/api/litcal_api.dart' as _i6;
 import 'package:lumen_missal/database/database.dart' as _i2;
-import 'package:lumen_missal/state/reading_notifier.dart' as _i9;
+import 'package:lumen_missal/settings/settings_notifier.dart' as _i8;
+import 'package:lumen_missal/state/reading_notifier.dart' as _i10;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i8;
+import 'package:mockito/src/dummies.dart' as _i9;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -163,6 +164,12 @@ class _FakeBibleApi_22 extends _i1.SmartFake implements _i7.BibleApi {
     : super(parent, parentInvocation);
 }
 
+class _FakeSettingsNotifier_23 extends _i1.SmartFake
+    implements _i8.SettingsNotifier {
+  _FakeSettingsNotifier_23(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [AppDatabase].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -273,7 +280,7 @@ class MockAppDatabase extends _i1.Mock implements _i2.AppDatabase {
   _i3.SqlTypes get typeMapping =>
       (super.noSuchMethod(
             Invocation.getter(#typeMapping),
-            returnValue: _i8.dummyValue<_i3.SqlTypes>(
+            returnValue: _i9.dummyValue<_i3.SqlTypes>(
               this,
               Invocation.getter(#typeMapping),
             ),
@@ -356,8 +363,8 @@ class MockAppDatabase extends _i1.Mock implements _i2.AppDatabase {
               #connect: connect,
             }),
             returnValue:
-                _i8.ifNotNull(
-                  _i8.dummyValueOrNull<Ret>(
+                _i9.ifNotNull(
+                  _i9.dummyValueOrNull<Ret>(
                     this,
                     Invocation.method(#computeWithDatabase, [], {
                       #computation: computation,
@@ -390,7 +397,7 @@ class MockAppDatabase extends _i1.Mock implements _i2.AppDatabase {
   T alias<T, D>(_i3.ResultSetImplementation<T, D>? table, String? alias) =>
       (super.noSuchMethod(
             Invocation.method(#alias, [table, alias]),
-            returnValue: _i8.dummyValue<T>(
+            returnValue: _i9.dummyValue<T>(
               this,
               Invocation.method(#alias, [table, alias]),
             ),
@@ -427,8 +434,8 @@ class MockAppDatabase extends _i1.Mock implements _i2.AppDatabase {
       (super.noSuchMethod(
             Invocation.method(#doWhenOpened, [fn]),
             returnValue:
-                _i8.ifNotNull(
-                  _i8.dummyValueOrNull<T>(
+                _i9.ifNotNull(
+                  _i9.dummyValueOrNull<T>(
                     this,
                     Invocation.method(#doWhenOpened, [fn]),
                   ),
@@ -643,8 +650,8 @@ class MockAppDatabase extends _i1.Mock implements _i2.AppDatabase {
               {#requireNew: requireNew},
             ),
             returnValue:
-                _i8.ifNotNull(
-                  _i8.dummyValueOrNull<T>(
+                _i9.ifNotNull(
+                  _i9.dummyValueOrNull<T>(
                     this,
                     Invocation.method(
                       #transaction,
@@ -670,8 +677,8 @@ class MockAppDatabase extends _i1.Mock implements _i2.AppDatabase {
       (super.noSuchMethod(
             Invocation.method(#exclusively, [action]),
             returnValue:
-                _i8.ifNotNull(
-                  _i8.dummyValueOrNull<T>(
+                _i9.ifNotNull(
+                  _i9.dummyValueOrNull<T>(
                     this,
                     Invocation.method(#exclusively, [action]),
                   ),
@@ -705,8 +712,8 @@ class MockAppDatabase extends _i1.Mock implements _i2.AppDatabase {
               {#interceptor: interceptor},
             ),
             returnValue:
-                _i8.ifNotNull(
-                  _i8.dummyValueOrNull<T>(
+                _i9.ifNotNull(
+                  _i9.dummyValueOrNull<T>(
                     this,
                     Invocation.method(
                       #runWithInterceptor,
@@ -780,7 +787,7 @@ class MockAppDatabase extends _i1.Mock implements _i2.AppDatabase {
   String $expandVar(int? start, int? amount) =>
       (super.noSuchMethod(
             Invocation.method(#$expandVar, [start, amount]),
-            returnValue: _i8.dummyValue<String>(
+            returnValue: _i9.dummyValue<String>(
               this,
               Invocation.method(#$expandVar, [start, amount]),
             ),
@@ -791,7 +798,7 @@ class MockAppDatabase extends _i1.Mock implements _i2.AppDatabase {
 /// A class which mocks [ReadingNotifier].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockReadingNotifier extends _i1.Mock implements _i9.ReadingNotifier {
+class MockReadingNotifier extends _i1.Mock implements _i10.ReadingNotifier {
   MockReadingNotifier() {
     _i1.throwOnMissingStub(this);
   }
@@ -824,6 +831,17 @@ class MockReadingNotifier extends _i1.Mock implements _i9.ReadingNotifier {
           as _i7.BibleApi);
 
   @override
+  _i8.SettingsNotifier get settingsNotifier =>
+      (super.noSuchMethod(
+            Invocation.getter(#settingsNotifier),
+            returnValue: _FakeSettingsNotifier_23(
+              this,
+              Invocation.getter(#settingsNotifier),
+            ),
+          )
+          as _i8.SettingsNotifier);
+
+  @override
   bool get isLoading =>
       (super.noSuchMethod(Invocation.getter(#isLoading), returnValue: false)
           as bool);
@@ -834,29 +852,31 @@ class MockReadingNotifier extends _i1.Mock implements _i9.ReadingNotifier {
           as bool);
 
   @override
-  _i5.Future<void> loadTodayReading() =>
+  void dispose() => super.noSuchMethod(
+    Invocation.method(#dispose, []),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  _i5.Future<void> loadTodayReading({bool? forceRefresh = false}) =>
       (super.noSuchMethod(
-            Invocation.method(#loadTodayReading, []),
+            Invocation.method(#loadTodayReading, [], {
+              #forceRefresh: forceRefresh,
+            }),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
           as _i5.Future<void>);
 
   @override
-  void addListener(_i10.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i11.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#addListener, [listener]),
     returnValueForMissingStub: null,
   );
 
   @override
-  void removeListener(_i10.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i11.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#removeListener, [listener]),
-    returnValueForMissingStub: null,
-  );
-
-  @override
-  void dispose() => super.noSuchMethod(
-    Invocation.method(#dispose, []),
     returnValueForMissingStub: null,
   );
 

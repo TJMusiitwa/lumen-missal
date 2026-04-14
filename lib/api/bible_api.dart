@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'bible_models.dart';
 
 class BibleApi {
   final http.Client client;
@@ -12,7 +13,8 @@ class BibleApi {
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
-      return jsonResponse['text'] as String;
+      final biblePassage = BiblePassageResponse.fromJson(jsonResponse as Map<String, dynamic>);
+      return biblePassage.text;
     } else {
       throw Exception('Failed to load Bible passage: $reference');
     }

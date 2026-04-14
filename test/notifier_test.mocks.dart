@@ -3,13 +3,14 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i5;
 
 import 'package:http/http.dart' as _i2;
-import 'package:lumen_missal/api/bible_api.dart' as _i5;
-import 'package:lumen_missal/api/litcal_api.dart' as _i3;
+import 'package:lumen_missal/api/bible_api.dart' as _i6;
+import 'package:lumen_missal/api/litcal_api.dart' as _i4;
+import 'package:lumen_missal/api/litcal_models.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i6;
+import 'package:mockito/src/dummies.dart' as _i7;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -31,10 +32,16 @@ class _FakeClient_0 extends _i1.SmartFake implements _i2.Client {
     : super(parent, parentInvocation);
 }
 
+class _FakeLitCalResponse_1 extends _i1.SmartFake
+    implements _i3.LitCalResponse {
+  _FakeLitCalResponse_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [LitCalApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockLitCalApi extends _i1.Mock implements _i3.LitCalApi {
+class MockLitCalApi extends _i1.Mock implements _i4.LitCalApi {
   MockLitCalApi() {
     _i1.throwOnMissingStub(this);
   }
@@ -48,20 +55,26 @@ class MockLitCalApi extends _i1.Mock implements _i3.LitCalApi {
           as _i2.Client);
 
   @override
-  _i4.Future<Map<String, dynamic>> fetchTodayData() =>
+  _i5.Future<_i3.LitCalResponse> fetchTodayData({
+    String? type = 'general',
+    String? id = '',
+  }) =>
       (super.noSuchMethod(
-            Invocation.method(#fetchTodayData, []),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
-              <String, dynamic>{},
+            Invocation.method(#fetchTodayData, [], {#type: type, #id: id}),
+            returnValue: _i5.Future<_i3.LitCalResponse>.value(
+              _FakeLitCalResponse_1(
+                this,
+                Invocation.method(#fetchTodayData, [], {#type: type, #id: id}),
+              ),
             ),
           )
-          as _i4.Future<Map<String, dynamic>>);
+          as _i5.Future<_i3.LitCalResponse>);
 }
 
 /// A class which mocks [BibleApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockBibleApi extends _i1.Mock implements _i5.BibleApi {
+class MockBibleApi extends _i1.Mock implements _i6.BibleApi {
   MockBibleApi() {
     _i1.throwOnMissingStub(this);
   }
@@ -75,15 +88,26 @@ class MockBibleApi extends _i1.Mock implements _i5.BibleApi {
           as _i2.Client);
 
   @override
-  _i4.Future<String> fetchPassage(String? reference) =>
+  _i5.Future<String> fetchPassage(
+    String? reference, {
+    String? translation = 'web',
+  }) =>
       (super.noSuchMethod(
-            Invocation.method(#fetchPassage, [reference]),
-            returnValue: _i4.Future<String>.value(
-              _i6.dummyValue<String>(
+            Invocation.method(
+              #fetchPassage,
+              [reference],
+              {#translation: translation},
+            ),
+            returnValue: _i5.Future<String>.value(
+              _i7.dummyValue<String>(
                 this,
-                Invocation.method(#fetchPassage, [reference]),
+                Invocation.method(
+                  #fetchPassage,
+                  [reference],
+                  {#translation: translation},
+                ),
               ),
             ),
           )
-          as _i4.Future<String>);
+          as _i5.Future<String>);
 }

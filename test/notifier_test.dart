@@ -10,6 +10,7 @@ import 'package:lumen_missal/state/reading_notifier.dart';
 import 'notifier_test.mocks.dart';
 
 import 'package:drift/native.dart';
+import 'package:lumen_missal/api/litcal_models.dart';
 
 @GenerateMocks([LitCalApi, BibleApi])
 void main() {
@@ -34,19 +35,23 @@ void main() {
   });
 
   test('loadTodayReading fetches data on cache miss and updates state correctly', () async {
-    when(mockLitCalApi.fetchTodayData()).thenAnswer((_) async => {
-      "litcal": {
-        "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}": [
-          {
-            "name": "Test Day",
-            "color": "green",
-            "readings": ["John 3:16"]
-          }
-        ]
-      }
+    when(mockLitCalApi.fetchTodayData(type: anyNamed('type'), id: anyNamed('id'))).thenAnswer((_) async {
+      return LitCalResponse.fromJson({
+        "litcal": {
+          "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}": [
+            {
+              "name": "Test Day",
+              "color": ["green"],
+              "readings": {
+                 "gospel": "John 3:16"
+              }
+            }
+          ]
+        }
+      });
     });
 
-    when(mockBibleApi.fetchPassage('John 3:16')).thenAnswer((_) async => 'Test Passage');
+    when(mockBibleApi.fetchPassage('John 3:16', translation: anyNamed('translation'))).thenAnswer((_) async => 'Test Passage');
 
     expect(notifier.isLoading, isFalse);
     expect(notifier.data, isNull);
@@ -65,7 +70,7 @@ void main() {
   });
 
   test('loadTodayReading handles errors correctly', () async {
-    when(mockLitCalApi.fetchTodayData()).thenThrow(Exception('API Error'));
+    when(mockLitCalApi.fetchTodayData(type: anyNamed('type'), id: anyNamed('id'))).thenThrow(Exception('API Error'));
 
     final future = notifier.loadTodayReading();
     await future;
