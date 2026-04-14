@@ -3,14 +3,18 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i5;
+import 'dart:async' as _i6;
+import 'dart:ui' as _i11;
 
+import 'package:flutter/material.dart' as _i10;
 import 'package:http/http.dart' as _i2;
-import 'package:lumen_missal/api/bible_api.dart' as _i6;
-import 'package:lumen_missal/api/litcal_api.dart' as _i4;
+import 'package:lumen_missal/api/bible_api.dart' as _i7;
+import 'package:lumen_missal/api/litcal_api.dart' as _i5;
 import 'package:lumen_missal/api/litcal_models.dart' as _i3;
+import 'package:lumen_missal/settings/settings_notifier.dart' as _i9;
+import 'package:lumen_missal/settings/settings_service.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i7;
+import 'package:mockito/src/dummies.dart' as _i8;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -38,10 +42,15 @@ class _FakeLitCalResponse_1 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
+class _FakeSettings_2 extends _i1.SmartFake implements _i4.Settings {
+  _FakeSettings_2(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [LitCalApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockLitCalApi extends _i1.Mock implements _i4.LitCalApi {
+class MockLitCalApi extends _i1.Mock implements _i5.LitCalApi {
   MockLitCalApi() {
     _i1.throwOnMissingStub(this);
   }
@@ -55,26 +64,26 @@ class MockLitCalApi extends _i1.Mock implements _i4.LitCalApi {
           as _i2.Client);
 
   @override
-  _i5.Future<_i3.LitCalResponse> fetchTodayData({
+  _i6.Future<_i3.LitCalResponse> fetchTodayData({
     String? type = 'general',
     String? id = '',
   }) =>
       (super.noSuchMethod(
             Invocation.method(#fetchTodayData, [], {#type: type, #id: id}),
-            returnValue: _i5.Future<_i3.LitCalResponse>.value(
+            returnValue: _i6.Future<_i3.LitCalResponse>.value(
               _FakeLitCalResponse_1(
                 this,
                 Invocation.method(#fetchTodayData, [], {#type: type, #id: id}),
               ),
             ),
           )
-          as _i5.Future<_i3.LitCalResponse>);
+          as _i6.Future<_i3.LitCalResponse>);
 }
 
 /// A class which mocks [BibleApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockBibleApi extends _i1.Mock implements _i6.BibleApi {
+class MockBibleApi extends _i1.Mock implements _i7.BibleApi {
   MockBibleApi() {
     _i1.throwOnMissingStub(this);
   }
@@ -88,7 +97,7 @@ class MockBibleApi extends _i1.Mock implements _i6.BibleApi {
           as _i2.Client);
 
   @override
-  _i5.Future<String> fetchPassage(
+  _i6.Future<String> fetchPassage(
     String? reference, {
     String? translation = 'web',
   }) =>
@@ -98,8 +107,8 @@ class MockBibleApi extends _i1.Mock implements _i6.BibleApi {
               [reference],
               {#translation: translation},
             ),
-            returnValue: _i5.Future<String>.value(
-              _i7.dummyValue<String>(
+            returnValue: _i6.Future<String>.value(
+              _i8.dummyValue<String>(
                 this,
                 Invocation.method(
                   #fetchPassage,
@@ -109,5 +118,128 @@ class MockBibleApi extends _i1.Mock implements _i6.BibleApi {
               ),
             ),
           )
-          as _i5.Future<String>);
+          as _i6.Future<String>);
+}
+
+/// A class which mocks [SettingsNotifier].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockSettingsNotifier extends _i1.Mock implements _i9.SettingsNotifier {
+  MockSettingsNotifier() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i4.Settings get settings =>
+      (super.noSuchMethod(
+            Invocation.getter(#settings),
+            returnValue: _FakeSettings_2(this, Invocation.getter(#settings)),
+          )
+          as _i4.Settings);
+
+  @override
+  _i10.ThemeMode get themeMode =>
+      (super.noSuchMethod(
+            Invocation.getter(#themeMode),
+            returnValue: _i10.ThemeMode.system,
+          )
+          as _i10.ThemeMode);
+
+  @override
+  String get bibleTranslation =>
+      (super.noSuchMethod(
+            Invocation.getter(#bibleTranslation),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#bibleTranslation),
+            ),
+          )
+          as String);
+
+  @override
+  String get calendarType =>
+      (super.noSuchMethod(
+            Invocation.getter(#calendarType),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#calendarType),
+            ),
+          )
+          as String);
+
+  @override
+  String get calendarId =>
+      (super.noSuchMethod(
+            Invocation.getter(#calendarId),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#calendarId),
+            ),
+          )
+          as String);
+
+  @override
+  bool get hasListeners =>
+      (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
+          as bool);
+
+  @override
+  _i6.Future<void> loadSettings() =>
+      (super.noSuchMethod(
+            Invocation.method(#loadSettings, []),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> updateThemeMode(_i10.ThemeMode? themeMode) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateThemeMode, [themeMode]),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> updateBibleTranslation(String? translation) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateBibleTranslation, [translation]),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> updateCalendar(String? type, String? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateCalendar, [type, id]),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
+
+  @override
+  void addListener(_i11.VoidCallback? listener) => super.noSuchMethod(
+    Invocation.method(#addListener, [listener]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void removeListener(_i11.VoidCallback? listener) => super.noSuchMethod(
+    Invocation.method(#removeListener, [listener]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void dispose() => super.noSuchMethod(
+    Invocation.method(#dispose, []),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void notifyListeners() => super.noSuchMethod(
+    Invocation.method(#notifyListeners, []),
+    returnValueForMissingStub: null,
+  );
 }
