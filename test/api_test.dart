@@ -19,9 +19,9 @@ void main() {
 
       final data = await api.fetchTodayData();
 
-      expect(data, isA<Map<String, dynamic>>());
-      expect(data['litcal']['2024-01-01'][0]['name'], 'Mary, Mother of God');
-      expect(data['litcal']['2024-01-01'][0]['color'], 'white');
+      expect(data.litcal.containsKey('2024-01-01'), true);
+      expect(data.litcal['2024-01-01']!.first.name, 'Mary, Mother of God');
+      expect(data.litcal['2024-01-01']!.first.color.first, 'white');
     });
 
     test('fetchTodayData throws exception on failure', () async {

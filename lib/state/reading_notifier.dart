@@ -90,7 +90,7 @@ class ReadingNotifier extends ChangeNotifier {
         }
 
         // Fetch LitCal data
-        final litCalData = await litCalApi.fetchTodayData(type: calType, id: calId);
+        final litCalResponse = await litCalApi.fetchTodayData(type: calType, id: calId);
 
         String title = 'Today\'s Reading';
         String color = 'green';
@@ -98,30 +98,31 @@ class ReadingNotifier extends ChangeNotifier {
 
         final baseDateKey = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
 
-        if (litCalData.containsKey('litcal') && litCalData['litcal'].containsKey(baseDateKey)) {
-          final dayDataList = litCalData['litcal'][baseDateKey] as List;
+        if (litCalResponse.litcal.containsKey(baseDateKey)) {
+          final dayDataList = litCalResponse.litcal[baseDateKey]!;
           if (dayDataList.isNotEmpty) {
             final dayData = dayDataList.first;
-            title = dayData['name'] ?? dayData['Name'] ?? title;
+            title = dayData.name;
 
-            // Handle 'color' or 'Color' properties (from v3 or v5 respectively)
-            if (dayData.containsKey('color')) {
-               if (dayData['color'] is List && dayData['color'].isNotEmpty) {
-                 color = dayData['color'][0];
-               } else if (dayData['color'] is String) {
-                 color = dayData['color'];
-               }
-            } else if (dayData.containsKey('Color') && dayData['Color'] is Map) {
-               color = dayData['Color']['option'] ?? color;
+            if (dayData.color.isNotEmpty) {
+              color = dayData.color.first;
             }
-            // LitCal might not have direct references in the V3 endpoint structure provided in the task context.
-            // In a real application, we would map the day to readings or extract from the provided payload if available.
-            // The instruction says "Extract the reading references", so we will simulate that extraction if it existed,
-            // or use a default reference if the structure is missing it to prevent a broken experience.
-            if (dayData.containsKey('readings') && dayData['readings'] is Map) {
-              final readingsMap = dayData['readings'] as Map;
-              readingReferences = readingsMap.values.map((v) => v.toString()).where((s) => s.isNotEmpty).toList();
-            } else {
+
+            if (dayData.readings != null) {
+              final readingsMap = {
+                'firstReading': dayData.readings!.firstReading,
+                'responsorialPsalm': dayData.readings!.responsorialPsalm,
+                'secondReading': dayData.readings!.secondReading,
+                'gospelAcclamation': dayData.readings!.gospelAcclamation,
+                'gospel': dayData.readings!.gospel,
+              };
+              readingReferences = readingsMap.values
+                  .where((v) => v != null && v.isNotEmpty)
+                  .cast<String>()
+                  .toList();
+            }
+
+            if (readingReferences.isEmpty) {
               readingReferences = ['1 Cor 13:1-13']; // Realistic fallback per the instructions
             }
           }
