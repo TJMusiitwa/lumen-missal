@@ -13,12 +13,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Flutter
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          cache: true
 
-      - name: Install dependencies
+      - name: Install Dart/Flutter dependencies
         run: flutter pub get
 
       - name: Generate build runner files
@@ -37,34 +38,73 @@ jobs:
         run: dart compile js web/worker.dart -o build/web/worker.dart.js
 
       - name: Package Chrome Extension
+        working-directory: build/web
         run: |
-          cd build/web
           zip -r ../../extension-chrome.zip .
-          cd ../..
+        # extension-chrome.zip will be at build/extension-chrome.zip
 
-      - name: Sign Firefox Addon
-        id: sign_firefox
-        uses: mozilla/add-on-action@v1
+      - name: Set up Node.js (for web-ext and Chrome upload)
+        uses: actions/setup-node@v4
         with:
-          extension: build/web
-          api-key: ${{ secrets.FIREFOX_API_KEY }}
-          api-secret: ${{ secrets.FIREFOX_API_SECRET }}
+          node-version: '18'
+
+      - name: Install web-ext and sign Firefox Addon
+        run: |
+          npm install --global web-ext
+          mkdir -p signed
+          web-ext sign --source build/web \
+            --api-key "${{ secrets.FIREFOX_API_KEY }}" \
+            --api-secret "${{ secrets.FIREFOX_API_SECRET }}" \
+            --artifacts-dir signed
+        env:
+          FIREFOX_API_KEY: ${{ secrets.FIREFOX_API_KEY }}
+          FIREFOX_API_SECRET: ${{ secrets.FIREFOX_API_SECRET }}
+
+      - name: Find signed XPI
+        id: find_xpi
+        run: |
+          set -e
+          XPI=$(ls signed/*.xpi 2>/dev/null || true)
+          if [ -z "$XPI" ]; then
+            echo "No signed XPI found in signed/; web-ext may have failed."
+            exit 1
+          fi
+          echo "SIGNED_XPI=$XPI" >> $GITHUB_ENV
+          echo "::notice::Found signed XPI: $XPI"
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        id: create_release
+        uses: actions/create-release@v1
         with:
-          files: |
-            extension-chrome.zip
-            ${{ steps.sign_firefox.outputs.xpi-path }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          body: Automated release for ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload to Chrome Web Store
-        uses: m-f-m-f/chrome-extension-upload@v1
+      - name: Upload Chrome zip to Release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build/extension-chrome.zip
+          asset_name: extension-chrome.zip
+          asset_content_type: application/zip
+
+      - name: Upload Firefox xpi to Release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.SIGNED_XPI }}
+          asset_name: firefox-addon.xpi
+          asset_content_type: application/x-xpinstall
+
+      - name: Publish to Chrome Web Store
+        uses: ExtensionNinja/extension-publish@main
         with:
           extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
           client-id: ${{ secrets.CLIENT_ID }}
           client-secret: ${{ secrets.CLIENT_SECRET }}
           refresh-token: ${{ secrets.REFRESH_TOKEN }}
-          zip-path: extension-chrome.zip
+          zip-path: build/extension-chrome.zip
           publish: true
