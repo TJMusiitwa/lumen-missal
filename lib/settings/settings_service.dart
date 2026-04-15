@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:web/web.dart' as web;
+
+import 'storage_impl.dart' as impl;
 
 class Settings {
   final ThemeMode themeMode;
@@ -50,29 +51,35 @@ class Settings {
 
 class SettingsService {
   static const String _settingsKey = 'lumen_missal_settings';
+  final Storage _storage;
+
+  SettingsService({Storage? storage}) : _storage = storage ?? impl.createStorage();
 
   Future<Settings> loadSettings() async {
     try {
-      final storage = web.window.localStorage;
-      final storedString = storage.getItem(_settingsKey);
+      final storedString = await _storage.getString(_settingsKey);
 
       if (storedString != null) {
         final decodedMap = json.decode(storedString) as Map<String, dynamic>;
         return Settings.fromJson(decodedMap);
       }
     } catch (e) {
-      debugPrint('Error loading settings from local storage: $e');
+      debugPrint('Error loading settings: $e');
     }
     return Settings();
   }
 
   Future<void> saveSettings(Settings settings) async {
     try {
-      final storage = web.window.localStorage;
       final jsonString = json.encode(settings.toJson());
-      storage.setItem(_settingsKey, jsonString);
+      await _storage.setString(_settingsKey, jsonString);
     } catch (e) {
-      debugPrint('Error saving settings to local storage: $e');
+      debugPrint('Error saving settings: $e');
     }
   }
+}
+
+abstract class Storage {
+  Future<String?> getString(String key);
+  Future<void> setString(String key, String value);
 }

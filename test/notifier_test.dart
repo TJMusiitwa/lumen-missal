@@ -6,25 +6,35 @@ import 'package:lumen_missal/api/litcal_api.dart';
 import 'package:lumen_missal/api/bible_api.dart';
 import 'package:lumen_missal/database/database.dart';
 import 'package:lumen_missal/state/reading_notifier.dart';
+import 'package:lumen_missal/settings/settings_notifier.dart';
 
 import 'notifier_test.mocks.dart';
 
 import 'package:drift/native.dart';
 import 'package:lumen_missal/api/litcal_models.dart';
 
-@GenerateMocks([LitCalApi, BibleApi])
+@GenerateMocks([LitCalApi, BibleApi, SettingsNotifier])
 void main() {
   late AppDatabase database;
   late MockLitCalApi mockLitCalApi;
   late MockBibleApi mockBibleApi;
+  late MockSettingsNotifier mockSettingsNotifier;
   late ReadingNotifier notifier;
 
   setUp(() {
     database = AppDatabase(NativeDatabase.memory());
     mockLitCalApi = MockLitCalApi();
     mockBibleApi = MockBibleApi();
+    mockSettingsNotifier = MockSettingsNotifier();
+
+    // Set up default mock values for settings
+    when(mockSettingsNotifier.calendarType).thenReturn('general');
+    when(mockSettingsNotifier.calendarId).thenReturn('');
+    when(mockSettingsNotifier.bibleTranslation).thenReturn('web');
+
     notifier = ReadingNotifier(
       database: database,
+      settingsNotifier: mockSettingsNotifier,
       litCalApi: mockLitCalApi,
       bibleApi: mockBibleApi,
     );
