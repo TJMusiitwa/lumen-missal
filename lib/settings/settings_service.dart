@@ -53,7 +53,8 @@ class SettingsService {
   static const String _settingsKey = 'lumen_missal_settings';
   final Storage _storage;
 
-  SettingsService({Storage? storage}) : _storage = storage ?? impl.createStorage();
+  SettingsService({Storage? storage})
+    : _storage = storage ?? impl.createStorage();
 
   Future<Settings> loadSettings() async {
     try {

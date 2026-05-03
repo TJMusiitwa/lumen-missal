@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import 'settings_service.dart';
 
 class SettingsNotifier extends ChangeNotifier {
@@ -7,7 +7,7 @@ class SettingsNotifier extends ChangeNotifier {
   Settings _settings = Settings();
 
   SettingsNotifier({required SettingsService settingsService})
-      : _settingsService = settingsService;
+    : _settingsService = settingsService;
 
   Settings get settings => _settings;
   ThemeMode get themeMode => _settings.themeMode;

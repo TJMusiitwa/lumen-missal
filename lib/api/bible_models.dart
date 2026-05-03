@@ -43,7 +43,9 @@ class BiblePassageResponse {
 
   factory BiblePassageResponse.fromJson(Map<String, dynamic> json) {
     var versesJson = json['verses'] as List? ?? [];
-    List<BibleVerse> versesList = versesJson.map((v) => BibleVerse.fromJson(v as Map<String, dynamic>)).toList();
+    List<BibleVerse> versesList = versesJson
+        .map((v) => BibleVerse.fromJson(v as Map<String, dynamic>))
+        .toList();
 
     return BiblePassageResponse(
       reference: json['reference'] as String? ?? '',

@@ -1,11 +1,13 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'database/database.dart';
+import 'settings/settings_notifier.dart';
+import 'settings/settings_service.dart';
 import 'state/reading_notifier.dart';
 import 'theme/color_mapper.dart';
-import 'settings/settings_service.dart';
-import 'settings/settings_notifier.dart';
 import 'ui/settings_screen.dart';
 
 void main() async {
@@ -23,10 +25,9 @@ void main() async {
     settingsNotifier: settingsNotifier,
   );
 
-  runApp(MyApp(
-    readingNotifier: readingNotifier,
-    settingsNotifier: settingsNotifier,
-  ));
+  runApp(
+    MyApp(readingNotifier: readingNotifier, settingsNotifier: settingsNotifier),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -44,20 +45,31 @@ class MyApp extends StatelessWidget {
     return ListenableBuilder(
       listenable: Listenable.merge([readingNotifier, settingsNotifier]),
       builder: (context, child) {
-        final liturgicalColorName = readingNotifier.data?.liturgicalColorName ?? 'green';
+        final liturgicalColorName =
+            readingNotifier.data?.liturgicalColorName ?? 'green';
         final seedColor = mapLiturgicalColor(liturgicalColorName);
 
         final textTheme = TextTheme(
           bodyLarge: GoogleFonts.crimsonText(fontSize: 18, height: 1.5),
           bodyMedium: GoogleFonts.crimsonText(fontSize: 16, height: 1.5),
-          titleLarge: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.bold),
-          titleMedium: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600),
-          labelLarge: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500),
+          titleLarge: GoogleFonts.inter(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+          titleMedium: GoogleFonts.inter(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+          labelLarge: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
         );
 
         return MaterialApp(
           title: 'Lumen Missal',
           themeMode: settingsNotifier.themeMode,
+          debugShowCheckedModeBanner: false,
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: seedColor,
@@ -127,9 +139,8 @@ class _ReadingScreenState extends State<ReadingScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SettingsScreen(
-                    settingsNotifier: widget.settingsNotifier,
-                  ),
+                  builder: (context) =>
+                      SettingsScreen(settingsNotifier: widget.settingsNotifier),
                 ),
               );
             },

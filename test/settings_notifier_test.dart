@@ -16,15 +16,22 @@ void main() {
     mockSettingsService = MockSettingsService();
 
     // Default mock response for loadSettings
-    when(mockSettingsService.loadSettings()).thenAnswer((_) async => Settings());
+    when(
+      mockSettingsService.loadSettings(),
+    ).thenAnswer((_) async => Settings());
 
     notifier = SettingsNotifier(settingsService: mockSettingsService);
   });
 
   group('SettingsNotifier Tests', () {
     test('loadSettings updates settings correctly', () async {
-      final customSettings = Settings(bibleTranslation: 'kjv', themeMode: ThemeMode.dark);
-      when(mockSettingsService.loadSettings()).thenAnswer((_) async => customSettings);
+      final customSettings = Settings(
+        bibleTranslation: 'kjv',
+        themeMode: ThemeMode.dark,
+      );
+      when(
+        mockSettingsService.loadSettings(),
+      ).thenAnswer((_) async => customSettings);
 
       await notifier.loadSettings();
 

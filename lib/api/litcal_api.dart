@@ -7,7 +7,10 @@ class LitCalApi {
 
   LitCalApi({http.Client? client}) : client = client ?? http.Client();
 
-  Future<LitCalResponse> fetchTodayData({String type = 'general', String id = ''}) async {
+  Future<LitCalResponse> fetchTodayData({
+    String type = 'general',
+    String id = '',
+  }) async {
     String url = 'https://litcal.johnromanodorazio.com/api/v5/calendar';
 
     if (type == 'nation' && id.isNotEmpty) {

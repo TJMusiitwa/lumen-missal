@@ -9,9 +9,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-      ),
+      appBar: AppBar(title: const Text('Settings')),
       body: ListenableBuilder(
         listenable: settingsNotifier,
         builder: (context, child) {
@@ -37,8 +35,8 @@ class SettingsScreen extends StatelessWidget {
         Text(
           'Appearance',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-              ),
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
         const SizedBox(height: 16),
         SizedBox(
@@ -79,8 +77,8 @@ class SettingsScreen extends StatelessWidget {
         Text(
           'Bible Source',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-              ),
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
@@ -90,22 +88,61 @@ class SettingsScreen extends StatelessWidget {
           ),
           value: settingsNotifier.bibleTranslation,
           items: const [
-            DropdownMenuItem(value: 'cherokee', child: Text('Cherokee New Testament')),
-            DropdownMenuItem(value: 'cuv', child: Text('Chinese Union Version')),
-            DropdownMenuItem(value: 'bkr', child: Text('Bible kralická (Czech)')),
-            DropdownMenuItem(value: 'asv', child: Text('American Standard Version (1901)')),
-            DropdownMenuItem(value: 'bbe', child: Text('Bible in Basic English')),
+            DropdownMenuItem(
+              value: 'cherokee',
+              child: Text('Cherokee New Testament'),
+            ),
+            DropdownMenuItem(
+              value: 'cuv',
+              child: Text('Chinese Union Version'),
+            ),
+            DropdownMenuItem(
+              value: 'bkr',
+              child: Text('Bible kralická (Czech)'),
+            ),
+            DropdownMenuItem(
+              value: 'asv',
+              child: Text('American Standard Version (1901)'),
+            ),
+            DropdownMenuItem(
+              value: 'bbe',
+              child: Text('Bible in Basic English'),
+            ),
             DropdownMenuItem(value: 'darby', child: Text('Darby Bible')),
-            DropdownMenuItem(value: 'dra', child: Text('Douay-Rheims 1899 American Edition')),
+            DropdownMenuItem(
+              value: 'dra',
+              child: Text('Douay-Rheims 1899 American Edition'),
+            ),
             DropdownMenuItem(value: 'kjv', child: Text('King James Version')),
             DropdownMenuItem(value: 'web', child: Text('World English Bible')),
-            DropdownMenuItem(value: 'ylt', child: Text("Young's Literal Translation (NT only)")),
-            DropdownMenuItem(value: 'oeb-cw', child: Text('Open English Bible, Commonwealth Edition')),
-            DropdownMenuItem(value: 'webbe', child: Text('World English Bible, British Edition')),
-            DropdownMenuItem(value: 'oeb-us', child: Text('Open English Bible, US Edition')),
-            DropdownMenuItem(value: 'clementine', child: Text('Clementine Latin Vulgate')),
-            DropdownMenuItem(value: 'almeida', child: Text('João Ferreira de Almeida (Portuguese)')),
-            DropdownMenuItem(value: 'rccv', child: Text('Protestant Romanian Corrected Cornilescu Version')),
+            DropdownMenuItem(
+              value: 'ylt',
+              child: Text("Young's Literal Translation (NT only)"),
+            ),
+            DropdownMenuItem(
+              value: 'oeb-cw',
+              child: Text('Open English Bible, Commonwealth Edition'),
+            ),
+            DropdownMenuItem(
+              value: 'webbe',
+              child: Text('World English Bible, British Edition'),
+            ),
+            DropdownMenuItem(
+              value: 'oeb-us',
+              child: Text('Open English Bible, US Edition'),
+            ),
+            DropdownMenuItem(
+              value: 'clementine',
+              child: Text('Clementine Latin Vulgate'),
+            ),
+            DropdownMenuItem(
+              value: 'almeida',
+              child: Text('João Ferreira de Almeida (Portuguese)'),
+            ),
+            DropdownMenuItem(
+              value: 'rccv',
+              child: Text('Protestant Romanian Corrected Cornilescu Version'),
+            ),
           ],
           onChanged: (value) {
             if (value != null) {
@@ -154,7 +191,9 @@ class SettingsScreen extends StatelessWidget {
 
     String? currentDiocese;
     if (settingsNotifier.calendarType == 'diocese') {
-      if (diocesesForNation.any((d) => d['id'] == settingsNotifier.calendarId)) {
+      if (diocesesForNation.any(
+        (d) => d['id'] == settingsNotifier.calendarId,
+      )) {
         currentDiocese = settingsNotifier.calendarId;
       }
     }
@@ -165,8 +204,8 @@ class SettingsScreen extends StatelessWidget {
         Text(
           'Liturgical Calendar',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-              ),
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
@@ -178,7 +217,9 @@ class SettingsScreen extends StatelessWidget {
           items: nations.map((nation) {
             return DropdownMenuItem(
               value: nation,
-              child: Text(nation == 'General Roman' ? 'General Roman Calendar' : nation),
+              child: Text(
+                nation == 'General Roman' ? 'General Roman Calendar' : nation,
+              ),
             );
           }).toList(),
           onChanged: (value) {
@@ -200,7 +241,10 @@ class SettingsScreen extends StatelessWidget {
             ),
             value: currentDiocese,
             items: [
-              const DropdownMenuItem(value: null, child: Text('None (Use National)')),
+              const DropdownMenuItem(
+                value: null,
+                child: Text('None (Use National)'),
+              ),
               ...diocesesForNation.map((diocese) {
                 return DropdownMenuItem(
                   value: diocese['id'],

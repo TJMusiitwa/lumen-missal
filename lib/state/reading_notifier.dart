@@ -39,8 +39,8 @@ class ReadingNotifier extends ChangeNotifier {
     required this.settingsNotifier,
     LitCalApi? litCalApi,
     BibleApi? bibleApi,
-  })  : litCalApi = litCalApi ?? LitCalApi(),
-        bibleApi = bibleApi ?? BibleApi() {
+  }) : litCalApi = litCalApi ?? LitCalApi(),
+       bibleApi = bibleApi ?? BibleApi() {
     // Reload when settings change so the reading updates
     settingsNotifier.addListener(_onSettingsChanged);
   }
@@ -67,13 +67,14 @@ class ReadingNotifier extends ChangeNotifier {
     final String calId = settingsNotifier.calendarId;
     final String translation = settingsNotifier.bibleTranslation;
     final String settingsHash = '${calType}_${calId}_$translation';
-    final dateKey = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}_$settingsHash';
+    final dateKey =
+        '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}_$settingsHash';
 
     try {
       // 1. Check Cache
-      final cached = await (database.select(database.cachedReadings)
-            ..where((t) => t.dateKey.equals(dateKey)))
-          .getSingleOrNull();
+      final cached = await (database.select(
+        database.cachedReadings,
+      )..where((t) => t.dateKey.equals(dateKey))).getSingleOrNull();
 
       if (cached != null && !forceRefresh) {
         // Cache Hit
@@ -86,17 +87,23 @@ class ReadingNotifier extends ChangeNotifier {
       } else {
         // Cache Miss or Force Refresh
         if (forceRefresh && cached != null) {
-          await (database.delete(database.cachedReadings)..where((t) => t.dateKey.equals(dateKey))).go();
+          await (database.delete(
+            database.cachedReadings,
+          )..where((t) => t.dateKey.equals(dateKey))).go();
         }
 
         // Fetch LitCal data
-        final litCalResponse = await litCalApi.fetchTodayData(type: calType, id: calId);
+        final litCalResponse = await litCalApi.fetchTodayData(
+          type: calType,
+          id: calId,
+        );
 
         String title = 'Today\'s Reading';
         String color = 'green';
         List<String> readingReferences = [];
 
-        final baseDateKey = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+        final baseDateKey =
+            '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
 
         if (litCalResponse.litcal.containsKey(baseDateKey)) {
           final dayDataList = litCalResponse.litcal[baseDateKey]!;
@@ -123,18 +130,25 @@ class ReadingNotifier extends ChangeNotifier {
             }
 
             if (readingReferences.isEmpty) {
-              readingReferences = ['1 Cor 13:1-13']; // Realistic fallback per the instructions
+              readingReferences = [
+                '1 Cor 13:1-13',
+              ]; // Realistic fallback per the instructions
             }
           }
         } else {
-           readingReferences = ['1 Cor 13:1-13']; // Realistic fallback per the instructions
+          readingReferences = [
+            '1 Cor 13:1-13',
+          ]; // Realistic fallback per the instructions
         }
 
         // Fetch Bible data
         final Map<String, String> compiledReadings = {};
         for (final ref in readingReferences) {
           try {
-            final text = await bibleApi.fetchPassage(ref, translation: translation);
+            final text = await bibleApi.fetchPassage(
+              ref,
+              translation: translation,
+            );
             compiledReadings[ref] = text;
           } catch (e) {
             compiledReadings[ref] = 'Passage not found in this translation.';
@@ -144,14 +158,16 @@ class ReadingNotifier extends ChangeNotifier {
         final readingsJsonString = json.encode(compiledReadings);
 
         // Save to Cache
-        await database.into(database.cachedReadings).insert(
-          CachedReadingsCompanion.insert(
-            dateKey: dateKey,
-            title: title,
-            liturgicalColorName: color,
-            readingsJson: readingsJsonString,
-          ),
-        );
+        await database
+            .into(database.cachedReadings)
+            .insert(
+              CachedReadingsCompanion.insert(
+                dateKey: dateKey,
+                title: title,
+                liturgicalColorName: color,
+                readingsJson: readingsJsonString,
+              ),
+            );
 
         _data = ReadingData(
           dateKey: dateKey,

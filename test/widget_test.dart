@@ -20,10 +20,12 @@ void main() {
     when(mockNotifier.data).thenReturn(null);
     when(mockSettingsNotifier.themeMode).thenReturn(ThemeMode.system);
 
-    await tester.pumpWidget(MyApp(
-      readingNotifier: mockNotifier,
-      settingsNotifier: mockSettingsNotifier,
-    ));
+    await tester.pumpWidget(
+      MyApp(
+        readingNotifier: mockNotifier,
+        settingsNotifier: mockSettingsNotifier,
+      ),
+    );
 
     expect(find.text('Daily Readings'), findsOneWidget);
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
