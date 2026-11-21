@@ -5,11 +5,19 @@
     "version": "1.0.0",
     "description": "Daily Catholic liturgical readings.",
     "action": {
-        "default_popup": "index.html"
+        "default_popup": "index.html",
+        "default_icon": {
+            "16": "icons/lumen/icon-16.png",
+            "32": "icons/lumen/icon-32.png"
+        }
     },
     "icons": {
-        "192": "icons/Icon-192.png",
-        "512": "icons/Icon-512.png"
+        "16": "icons/lumen/icon-16.png",
+        "32": "icons/lumen/icon-32.png",
+        "48": "icons/lumen/icon-48.png",
+        "128": "icons/lumen/icon-128.png",
+        "192": "icons/lumen/icon-192.png",
+        "512": "icons/lumen/icon-512.png"
     },
     "permissions": [
         "storage"
