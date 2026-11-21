@@ -1,0 +1,17 @@
+html, body {
+  margin: 0;
+  background: #ecebf0;
+}
+
+@media (prefers-color-scheme: dark) {
+  html, body {
+    background: #121217;
+  }
+}
+
+html.extension-popup,
+html.extension-popup body {
+  width: 420px;
+  height: 600px;
+  overflow: hidden;
+}

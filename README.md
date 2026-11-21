@@ -1,64 +1,34 @@
 # Lumen Missal
 
-Lumen Missal is a production-ready, open-source, offline-capable browser extension (Manifest V3) for Chrome and Firefox. It serves as a "Daily Missal", displaying daily Catholic liturgical readings by chaining data from the Catholic LitCal API to the Bible API. It dynamically themes its beautiful Flutter UI based on the current liturgical season and caches data locally for offline availability.
+Lumen Missal is a Flutter browser extension for the daily Catholic liturgical readings. Choose a general, national, or diocesan calendar and a Bible translation in Settings.
 
-## Architecture
+## Readings and storage
 
-*   **Framework:** Flutter Web, compiled strictly to WebAssembly (`--wasm`).
-*   **State Management:** Pure Flutter `ChangeNotifier` and `ListenableBuilder`.
-*   **Persistence:** Local caching via `drift` alongside `drift_sqlite3` and `sqlite3` for the web. A background Web Worker runs the database to persist to IndexedDB without blocking the UI thread.
-*   **Networking:** Standard `http` package for chaining requests to the LitCal API and Bible API.
-*   **Typography & Styling:** Utilizes `google_fonts` to provide a premium digital Missal feel. Dynamic theming maps LitCal liturgical colors directly into Flutter's `ColorScheme`.
+[LitCal v5](https://litcal.johnromanodorazio.com/dist/) provides the celebration and reading citations for the browser's local date. The extension selects the daytime celebration and fetches scripture text from [Bible API](https://bible-api.com/). It keeps the original citations visible. Bible API serves whole verses, including when a citation specifies part of a verse.
 
-## Building the Extension
+The extension caches a day's calendar and successful passages in Drift, scoped to the selected calendar and Bible translation. A failed refresh leaves saved passages available. Settings use browser local storage and app state uses Flutter's ChangeNotifier. Inter is bundled so the popup's typography works offline.
 
-### Prerequisites
+Calendar coverage and scripture coverage depend on the upstream services. If LitCal omits citations, the extension shows the celebration and explains the missing data. If Bible API cannot provide text, the citation remains available in the reading index.
 
-Ensure you have the Flutter SDK installed and configured.
+## Build the extension
 
-### Dependencies & Boilerplate Generation
+Use the Flutter and Dart versions specified in [pubspec.yaml](pubspec.yaml).
 
-Run the following to fetch dependencies and generate the required Drift boilerplate:
-
-```bash
+```sh
 flutter pub get
-dart run build_runner build -d
-```
-
-### Building for WebAssembly
-
-Compile the Flutter app to WebAssembly:
-
-```bash
+flutter analyze
+flutter test
 flutter build web --release --wasm
 dart compile js web/worker.dart -o build/web/worker.dart.js
 ```
 
-### Running Locally with sqlite3.wasm
+- **Chrome**. Open `chrome://extensions/`, enable Developer mode, and choose **Load unpacked**. Select the `build/web` directory.
+- **Firefox**. Open `about:debugging#/runtime/this-firefox` and choose **Load Temporary Add-on**. Select `build/web/manifest.json`.
 
-Because the app relies on Web Workers and a `sqlite3.wasm` binary, serving the app requires correct headers (like Cross-Origin-Opener-Policy). When testing locally, you can serve the build directory using Python:
+To preview the app in a regular browser tab, serve `build/web` over loopback with `python3 -m http.server 8000 --directory build/web`. The browser extension host permissions allow requests to both APIs. When served over HTTP, the upstream services must allow cross-origin requests from the preview origin.
 
-```bash
-cd build/web
-python3 -m http.server 8000
-```
-*Note: Due to COOP/COEP requirements for SharedArrayBuffer (often used by sqlite3 Wasm), you may need a custom server script to attach the proper headers if simple HTTP serving fails.*
+To regenerate Drift and Mockito code after changes to their declarations, run `dart run build_runner build`.
 
-## Browser Extension Deployment
+## Open source
 
-### Chrome
-
-1. Build the app as described above.
-2. Open Chrome and navigate to `chrome://extensions/`.
-3. Enable **Developer mode**.
-4. Click **Load unpacked** and select the `build/web` directory.
-
-### Firefox
-
-1. Open Firefox and navigate to `about:debugging#/runtime/this-firefox`.
-2. Click **Load Temporary Add-on...**
-3. Select the `web/manifest.json` file.
-
-## Open Source
-
-Please refer to [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to contribute and [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) for community guidelines. This project is licensed under the [MIT License](LICENSE).
+See [CONTRIBUTING.md](CONTRIBUTING.md) and the [MIT License](LICENSE). The bundled Inter font is distributed under its [SIL Open Font License](assets/fonts/OFL.txt).

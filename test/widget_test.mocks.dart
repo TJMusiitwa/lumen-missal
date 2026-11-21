@@ -16,7 +16,7 @@ import 'package:lumen_missal/database/database.dart' as _i3;
 import 'package:lumen_missal/settings/settings_notifier.dart' as _i9;
 import 'package:lumen_missal/settings/settings_service.dart' as _i10;
 import 'package:lumen_missal/state/reading_notifier.dart' as _i12;
-import 'package:material_ui/material_ui.dart' as _i14;
+import 'package:flutter/material.dart' as _i14;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i11;
 

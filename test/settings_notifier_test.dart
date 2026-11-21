@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
@@ -16,9 +16,8 @@ void main() {
     mockSettingsService = MockSettingsService();
 
     // Default mock response for loadSettings
-    when(
-      mockSettingsService.loadSettings(),
-    ).thenAnswer((_) async => Settings());
+    when(mockSettingsService.loadSettings())
+        .thenAnswer((_) async => Settings());
 
     notifier = SettingsNotifier(settingsService: mockSettingsService);
   });
@@ -29,9 +28,8 @@ void main() {
         bibleTranslation: 'kjv',
         themeMode: ThemeMode.dark,
       );
-      when(
-        mockSettingsService.loadSettings(),
-      ).thenAnswer((_) async => customSettings);
+      when(mockSettingsService.loadSettings())
+          .thenAnswer((_) async => customSettings);
 
       await notifier.loadSettings();
 

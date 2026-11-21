@@ -13,7 +13,7 @@ import 'package:lumen_missal/api/litcal_api.dart' as _i5;
 import 'package:lumen_missal/api/litcal_models.dart' as _i3;
 import 'package:lumen_missal/settings/settings_notifier.dart' as _i9;
 import 'package:lumen_missal/settings/settings_service.dart' as _i4;
-import 'package:material_ui/material_ui.dart' as _i10;
+import 'package:flutter/material.dart' as _i10;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i8;
 

@@ -2,12 +2,10 @@ import 'package:flutter/foundation.dart';
 
 import '../api/litcal_api.dart';
 
-class CalendarMetadata {
-  final Map<String, String> nations;
-  final Map<String, List<Map<String, String>>> dioceses;
-
-  CalendarMetadata({required this.nations, required this.dioceses});
-}
+class const CalendarMetadata({
+  required final Map<String, String> nations,
+  required final Map<String, List<Map<String, String>>> dioceses,
+});
 
 class CalendarNotifier extends ChangeNotifier {
   final LitCalApi _api;
@@ -24,7 +22,7 @@ class CalendarNotifier extends ChangeNotifier {
   CalendarMetadata? get metadata => _metadata;
 
   Future<void> loadMetadata() async {
-    if (_metadata != null) return;
+    if (_metadata != null || _isLoading) return;
 
     _isLoading = true;
     _error = null;

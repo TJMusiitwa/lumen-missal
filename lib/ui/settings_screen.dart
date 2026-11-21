@@ -1,305 +1,250 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 
 import '../settings/settings_notifier.dart';
 import '../state/calendar_notifier.dart';
+import '../theme/popup_theme.dart';
 
-class SettingsScreen extends StatefulWidget {
-  final SettingsNotifier settingsNotifier;
-  final CalendarNotifier calendarNotifier;
-
-  const SettingsScreen({
-    super.key,
-    required this.settingsNotifier,
-    required this.calendarNotifier,
-  });
-
+class const SettingsScreen({
+  required final SettingsNotifier settingsNotifier,
+  required final CalendarNotifier calendarNotifier,
+  super.key,
+}) extends StatefulWidget {
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  static const _translations = {
+    'web': 'World English Bible',
+    'webbe': 'World English Bible (British Edition)',
+    'asv': 'American Standard Version',
+    'bsb': 'Berean Standard Bible',
+    'bbe': 'Bible in Basic English',
+    'darby': 'Darby Bible',
+    'dra': 'Douay-Rheims 1899 American Edition',
+    'kjv': 'King James Version',
+    'oeb-cw': 'Open English Bible (Commonwealth Edition)',
+    'oeb-us': 'Open English Bible (US Edition)',
+    'cherokee': 'Cherokee New Testament',
+    'cuv-simp': 'Chinese Union Version (Simplified)',
+    'cuv': 'Chinese Union Version (Traditional, saved preference)',
+    'cuv-trad': 'Chinese Union Version (Traditional)',
+    'bkr': 'Bible kralická (Czech)',
+    'clementine': 'Clementine Latin Vulgate',
+    'rccv': 'Romanian Corrected Cornilescu Version',
+    'swahili': 'Swahili Bible',
+  };
+
   @override
   void initState() {
     super.initState();
-    widget.calendarNotifier.loadMetadata();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) widget.calendarNotifier.loadMetadata();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
-      body: ListenableBuilder(
-        listenable: Listenable.merge([
-          widget.settingsNotifier,
-          widget.calendarNotifier,
-        ]),
-        builder: (context, child) {
-          return ListView(
-            padding: const EdgeInsets.all(16.0),
-            children: [
-              _buildThemeSection(context),
-              const Divider(),
-              _buildBibleSection(context),
-              const Divider(),
-              _buildCalendarSection(context),
-            ],
-          );
-        },
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final settings = widget.settingsNotifier;
+    final calendars = widget.calendarNotifier;
+    return PopupFrame(
+      Column(
+        children: [
+          PopupToolbar(
+            leading: Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.arrow_back_rounded, size: 17),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 10,
+                  ),
+                ),
+                label: const Text('Daily readings'),
+              ),
+            ),
+            actions: const [],
+          ),
+          Expanded(
+            child: ListenableBuilder(
+              listenable: Listenable.merge([settings, calendars]),
+              builder: (context, _) => ListView(
+                padding: const EdgeInsets.fromLTRB(
+                  popupPadding,
+                  20,
+                  popupPadding,
+                  24,
+                ),
+                children: [
+                  Semantics(
+                    header: true,
+                    child: Text(
+                      'Settings',
+                      style: theme.textTheme.headlineSmall,
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  Text('Appearance', style: theme.textTheme.titleMedium),
+                  const SizedBox(height: 7),
+                  SegmentedButton<ThemeMode>(
+                    showSelectedIcon: false,
+                    segments: const [
+                      ButtonSegment(
+                        value: ThemeMode.system,
+                        label: Text('System'),
+                      ),
+                      ButtonSegment(
+                        value: ThemeMode.light,
+                        label: Text('Light'),
+                      ),
+                      ButtonSegment(value: ThemeMode.dark, label: Text('Dark')),
+                    ],
+                    selected: {settings.themeMode},
+                    onSelectionChanged: (modes) =>
+                        settings.updateThemeMode(modes.single),
+                  ),
+                  const SizedBox(height: 18),
+                  const Divider(height: 1),
+                  const SizedBox(height: 18),
+                  Text('Scripture', style: theme.textTheme.titleMedium),
+                  const SizedBox(height: 12),
+                  _translationField(settings),
+                  const SizedBox(height: 18),
+                  const Divider(height: 1),
+                  const SizedBox(height: 18),
+                  Text(
+                    'Liturgical calendar',
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 12),
+                  if (calendars.isLoading)
+                    const LinearProgressIndicator(
+                      semanticsLabel: 'Loading calendars',
+                    )
+                  else if (calendars.metadata case final metadata?)
+                    ..._calendarFields(settings, metadata)
+                  else if (calendars.error != null) ...[
+                    Text(
+                      'Calendar choices couldn’t be loaded.',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton(
+                        onPressed: calendars.loadMetadata,
+                        child: const Text('Retry calendar list'),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildThemeSection(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Appearance',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          width: double.infinity,
-          child: SegmentedButton<ThemeMode>(
-            segments: const [
-              ButtonSegment<ThemeMode>(
-                value: ThemeMode.system,
-                label: Text('System'),
-                icon: Icon(Icons.brightness_auto),
-              ),
-              ButtonSegment<ThemeMode>(
-                value: ThemeMode.light,
-                label: Text('Light'),
-                icon: Icon(Icons.light_mode),
-              ),
-              ButtonSegment<ThemeMode>(
-                value: ThemeMode.dark,
-                label: Text('Dark'),
-                icon: Icon(Icons.dark_mode),
-              ),
-            ],
-            selected: {widget.settingsNotifier.themeMode},
-            onSelectionChanged: (Set<ThemeMode> newSelection) {
-              widget.settingsNotifier.updateThemeMode(newSelection.first);
-            },
-          ),
-        ),
-        const SizedBox(height: 16),
-      ],
+  Widget _translationField(SettingsNotifier settings) {
+    final value = settings.bibleTranslation;
+    final options = {
+      if (!_translations.containsKey(value))
+        value: '${value.toUpperCase()} (saved preference)',
+      ..._translations,
+    };
+    return _settingField(
+      label: 'Bible translation',
+      value: value,
+      options: options,
+      onChanged: settings.updateBibleTranslation,
     );
   }
 
-  Widget _buildBibleSection(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Bible Source',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: Theme.of(context).colorScheme.primary,
+  List<Widget> _calendarFields(
+    SettingsNotifier settings,
+    CalendarMetadata metadata,
+  ) {
+    final nation = switch (settings.calendarType) {
+      'nation' => settings.calendarId,
+      'diocese' =>
+        metadata.dioceses.entries
+                .where(
+                  (entry) => entry.value.any(
+                    (item) => item['id'] == settings.calendarId,
+                  ),
+                )
+                .firstOrNull
+                ?.key ??
+            'general',
+      _ => 'general',
+    };
+    final nations = {
+      'general': 'General Roman Calendar',
+      ...metadata.nations,
+      if (nation != 'general' && !metadata.nations.containsKey(nation))
+        nation: nation,
+    };
+    final dioceses = {
+      '': 'Use national calendar',
+      for (final diocese
+          in metadata.dioceses[nation] ?? const <Map<String, String>>[])
+        diocese['id']!: diocese['name']!,
+    };
+
+    return [
+      _settingField(
+        label: 'Calendar',
+        value: nation,
+        options: nations,
+        onChanged: (value) => settings.updateCalendar(
+          value == 'general' ? 'general' : 'nation',
+          value == 'general' ? '' : value,
+        ),
+      ),
+      if (dioceses.length > 1) ...[
+        const SizedBox(height: 14),
+        _settingField(
+          label: 'Diocese',
+          value:
+              settings.calendarType == 'diocese' &&
+                  dioceses.containsKey(settings.calendarId)
+              ? settings.calendarId
+              : '',
+          options: dioceses,
+          onChanged: (value) => settings.updateCalendar(
+            value.isEmpty ? 'nation' : 'diocese',
+            value.isEmpty ? nation : value,
           ),
         ),
-        const SizedBox(height: 16),
-        DropdownButtonFormField<String>(
-          decoration: const InputDecoration(
-            labelText: 'Translation',
-            border: OutlineInputBorder(),
-          ),
-          initialValue: widget.settingsNotifier.bibleTranslation,
-          isExpanded: true,
-          items: const [
-            DropdownMenuItem(
-              value: 'cherokee',
-              child: Text('Cherokee New Testament'),
-            ),
-            DropdownMenuItem(
-              value: 'cuv',
-              child: Text('Chinese Union Version'),
-            ),
-            DropdownMenuItem(
-              value: 'bkr',
-              child: Text('Bible kralická (Czech)'),
-            ),
-            DropdownMenuItem(
-              value: 'asv',
-              child: Text('American Standard Version (1901)'),
-            ),
-            DropdownMenuItem(
-              value: 'bbe',
-              child: Text('Bible in Basic English'),
-            ),
-            DropdownMenuItem(value: 'darby', child: Text('Darby Bible')),
-            DropdownMenuItem(
-              value: 'dra',
-              child: Text('Douay-Rheims 1899 American Edition'),
-            ),
-            DropdownMenuItem(value: 'kjv', child: Text('King James Version')),
-            DropdownMenuItem(value: 'web', child: Text('World English Bible')),
-            DropdownMenuItem(
-              value: 'ylt',
-              child: Text("Young's Literal Translation (NT only)"),
-            ),
-            DropdownMenuItem(
-              value: 'oeb-cw',
-              child: Text('Open English Bible, Commonwealth Edition'),
-            ),
-            DropdownMenuItem(
-              value: 'webbe',
-              child: Text('World English Bible, British Edition'),
-            ),
-            DropdownMenuItem(
-              value: 'oeb-us',
-              child: Text('Open English Bible, US Edition'),
-            ),
-            DropdownMenuItem(
-              value: 'clementine',
-              child: Text('Clementine Latin Vulgate'),
-            ),
-            DropdownMenuItem(
-              value: 'almeida',
-              child: Text('João Ferreira de Almeida (Portuguese)'),
-            ),
-            DropdownMenuItem(
-              value: 'rccv',
-              child: Text('Protestant Romanian Corrected Cornilescu Version'),
-            ),
-          ],
-          onChanged: (value) {
-            if (value != null) {
-              widget.settingsNotifier.updateBibleTranslation(value);
-            }
-          },
-        ),
-        const SizedBox(height: 16),
       ],
-    );
+    ];
   }
 
-  Widget _buildCalendarSection(BuildContext context) {
-    final metadata = widget.calendarNotifier.metadata;
-
-    if (widget.calendarNotifier.isLoading) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: CircularProgressIndicator(),
+  Widget _settingField({
+    required String label,
+    required String value,
+    required Map<String, String> options,
+    required ValueChanged<String> onChanged,
+  }) => DropdownButtonFormField<String>(
+    key: ValueKey((label, value)),
+    decoration: InputDecoration(labelText: label),
+    initialValue: value,
+    isExpanded: true,
+    items: [
+      for (final MapEntry(:key, :value) in options.entries)
+        DropdownMenuItem(
+          value: key,
+          child: Text(value, overflow: TextOverflow.ellipsis),
         ),
-      );
-    }
-
-    if (widget.calendarNotifier.error != null) {
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Text(
-          'Error loading calendars: ${widget.calendarNotifier.error}',
-          style: const TextStyle(color: Colors.red),
-        ),
-      );
-    }
-
-    if (metadata == null) {
-      return const SizedBox.shrink();
-    }
-
-    final nations = metadata.nations;
-    final nationKeys = nations.keys.toList();
-
-    // Determine current selected nation based on calendarId if type is diocese
-    String currentNation = 'general';
-    if (widget.settingsNotifier.calendarType == 'nation') {
-      currentNation = widget.settingsNotifier.calendarId;
-    } else if (widget.settingsNotifier.calendarType == 'diocese') {
-      // Find the nation for the current diocese
-      for (final entry in metadata.dioceses.entries) {
-        if (entry.value.any(
-          (d) => d['id'] == widget.settingsNotifier.calendarId,
-        )) {
-          currentNation = entry.key;
-          break;
-        }
-      }
-    }
-
-    final diocesesForNation = metadata.dioceses[currentNation] ?? [];
-
-    String? currentDiocese;
-    if (widget.settingsNotifier.calendarType == 'diocese') {
-      if (diocesesForNation.any(
-        (d) => d['id'] == widget.settingsNotifier.calendarId,
-      )) {
-        currentDiocese = widget.settingsNotifier.calendarId;
-      }
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Liturgical Calendar',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-        const SizedBox(height: 16),
-        DropdownButtonFormField<String>(
-          decoration: const InputDecoration(
-            labelText: 'National / General Calendar',
-            border: OutlineInputBorder(),
-          ),
-          initialValue: currentNation,
-          items: [
-            const DropdownMenuItem(
-              value: 'general',
-              child: Text('General Roman Calendar'),
-            ),
-            ...nationKeys.map((key) {
-              return DropdownMenuItem(value: key, child: Text(nations[key]!));
-            }),
-          ],
-          onChanged: (value) {
-            if (value != null) {
-              if (value == 'general') {
-                widget.settingsNotifier.updateCalendar('general', '');
-              } else {
-                widget.settingsNotifier.updateCalendar('nation', value);
-              }
-            }
-          },
-        ),
-        if (diocesesForNation.isNotEmpty) ...[
-          const SizedBox(height: 16),
-          DropdownButtonFormField<String?>(
-            decoration: const InputDecoration(
-              labelText: 'Diocesan Calendar (Optional)',
-              border: OutlineInputBorder(),
-            ),
-            initialValue: currentDiocese,
-            items: [
-              const DropdownMenuItem(
-                value: null,
-                child: Text('None (Use National)'),
-              ),
-              ...diocesesForNation.map((diocese) {
-                return DropdownMenuItem(
-                  value: diocese['id'],
-                  child: Text(diocese['name']!),
-                );
-              }),
-            ],
-            onChanged: (value) {
-              if (value != null) {
-                widget.settingsNotifier.updateCalendar('diocese', value);
-              } else {
-                // If none is selected, revert to the nation
-                widget.settingsNotifier.updateCalendar('nation', currentNation);
-              }
-            },
-          ),
-        ],
-        const SizedBox(height: 16),
-      ],
-    );
-  }
+    ],
+    onChanged: (selection) {
+      if (selection != null) onChanged(selection);
+    },
+  );
 }

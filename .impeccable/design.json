@@ -1,0 +1,702 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-21T15:19:24Z",
+  "title": "Design System: Lumen Missal",
+  "extensions": {
+    "colorMeta": {
+      "surface": {
+        "role": "neutral",
+        "displayName": "Reading surface",
+        "tonalRamp": [
+          "oklch(15% 0.0011 308.4)",
+          "oklch(25% 0.0016 308.4)",
+          "oklch(38% 0.0023 308.4)",
+          "oklch(50% 0.0028 308.4)",
+          "oklch(62% 0.0028 308.4)",
+          "oklch(75% 0.0024 308.4)",
+          "oklch(86% 0.0017 308.4)",
+          "oklch(95% 0.0008 308.4)"
+        ]
+      },
+      "surface-dark": {
+        "role": "neutral",
+        "displayName": "Reading surface in dark mode",
+        "tonalRamp": [
+          "oklch(15% 0.0044 285.4)",
+          "oklch(25% 0.0067 285.4)",
+          "oklch(38% 0.0095 285.4)",
+          "oklch(50% 0.0116 285.4)",
+          "oklch(62% 0.0116 285.4)",
+          "oklch(75% 0.0099 285.4)",
+          "oklch(86% 0.0070 285.4)",
+          "oklch(95% 0.0035 285.4)"
+        ]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Browser tab canvas",
+        "tonalRamp": [
+          "oklch(15% 0.0026 295.4)",
+          "oklch(25% 0.0039 295.4)",
+          "oklch(38% 0.0055 295.4)",
+          "oklch(50% 0.0068 295.4)",
+          "oklch(62% 0.0068 295.4)",
+          "oklch(75% 0.0057 295.4)",
+          "oklch(86% 0.0041 295.4)",
+          "oklch(95% 0.0020 295.4)"
+        ]
+      },
+      "canvas-dark": {
+        "role": "neutral",
+        "displayName": "Browser tab canvas in dark mode",
+        "tonalRamp": [
+          "oklch(15% 0.0039 285.4)",
+          "oklch(25% 0.0059 285.4)",
+          "oklch(38% 0.0083 285.4)",
+          "oklch(50% 0.0101 285.4)",
+          "oklch(62% 0.0101 285.4)",
+          "oklch(75% 0.0086 285.4)",
+          "oklch(86% 0.0061 285.4)",
+          "oklch(95% 0.0030 285.4)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Main text",
+        "tonalRamp": [
+          "oklch(15% 0.0065 295.3)",
+          "oklch(25% 0.0099 295.3)",
+          "oklch(38% 0.0139 295.3)",
+          "oklch(50% 0.0170 295.3)",
+          "oklch(62% 0.0170 295.3)",
+          "oklch(75% 0.0144 295.3)",
+          "oklch(86% 0.0102 295.3)",
+          "oklch(95% 0.0051 295.3)"
+        ]
+      },
+      "ink-dark": {
+        "role": "neutral",
+        "displayName": "Main text in dark mode",
+        "tonalRamp": [
+          "oklch(15% 0.0043 308.3)",
+          "oklch(25% 0.0066 308.3)",
+          "oklch(38% 0.0094 308.3)",
+          "oklch(50% 0.0114 308.3)",
+          "oklch(62% 0.0114 308.3)",
+          "oklch(75% 0.0097 308.3)",
+          "oklch(86% 0.0068 308.3)",
+          "oklch(95% 0.0034 308.3)"
+        ]
+      },
+      "muted-ink": {
+        "role": "neutral",
+        "displayName": "Supporting text",
+        "tonalRamp": [
+          "oklch(15% 0.0119 302.0)",
+          "oklch(25% 0.0182 302.0)",
+          "oklch(38% 0.0257 302.0)",
+          "oklch(50% 0.0314 302.0)",
+          "oklch(62% 0.0314 302.0)",
+          "oklch(75% 0.0267 302.0)",
+          "oklch(86% 0.0188 302.0)",
+          "oklch(95% 0.0094 302.0)"
+        ]
+      },
+      "muted-ink-dark": {
+        "role": "neutral",
+        "displayName": "Supporting text in dark mode",
+        "tonalRamp": [
+          "oklch(15% 0.0094 301.9)",
+          "oklch(25% 0.0143 301.9)",
+          "oklch(38% 0.0202 301.9)",
+          "oklch(50% 0.0246 301.9)",
+          "oklch(62% 0.0246 301.9)",
+          "oklch(75% 0.0209 301.9)",
+          "oklch(86% 0.0148 301.9)",
+          "oklch(95% 0.0074 301.9)"
+        ]
+      },
+      "low-surface": {
+        "role": "neutral",
+        "displayName": "Form and status surface",
+        "tonalRamp": [
+          "oklch(15% 0.0022 308.4)",
+          "oklch(25% 0.0033 308.4)",
+          "oklch(38% 0.0047 308.4)",
+          "oklch(50% 0.0057 308.4)",
+          "oklch(62% 0.0057 308.4)",
+          "oklch(75% 0.0048 308.4)",
+          "oklch(86% 0.0034 308.4)",
+          "oklch(95% 0.0017 308.4)"
+        ]
+      },
+      "low-surface-dark": {
+        "role": "neutral",
+        "displayName": "Form and status surface in dark mode",
+        "tonalRamp": [
+          "oklch(15% 0.0050 292.0)",
+          "oklch(25% 0.0076 292.0)",
+          "oklch(38% 0.0108 292.0)",
+          "oklch(50% 0.0131 292.0)",
+          "oklch(62% 0.0131 292.0)",
+          "oklch(75% 0.0112 292.0)",
+          "oklch(86% 0.0079 292.0)",
+          "oklch(95% 0.0039 292.0)"
+        ]
+      },
+      "divider": {
+        "role": "neutral",
+        "displayName": "Divider",
+        "tonalRamp": [
+          "oklch(15% 0.0063 301.2)",
+          "oklch(25% 0.0097 301.2)",
+          "oklch(38% 0.0137 301.2)",
+          "oklch(50% 0.0167 301.2)",
+          "oklch(62% 0.0167 301.2)",
+          "oklch(75% 0.0142 301.2)",
+          "oklch(86% 0.0100 301.2)",
+          "oklch(95% 0.0050 301.2)"
+        ]
+      },
+      "divider-dark": {
+        "role": "neutral",
+        "displayName": "Divider in dark mode",
+        "tonalRamp": [
+          "oklch(15% 0.0081 296.6)",
+          "oklch(25% 0.0124 296.6)",
+          "oklch(38% 0.0175 296.6)",
+          "oklch(50% 0.0214 296.6)",
+          "oklch(62% 0.0214 296.6)",
+          "oklch(75% 0.0182 296.6)",
+          "oklch(86% 0.0128 296.6)",
+          "oklch(95% 0.0064 296.6)"
+        ]
+      },
+      "outline": {
+        "role": "neutral",
+        "displayName": "Control outline",
+        "tonalRamp": [
+          "oklch(15% 0.0060 303.9)",
+          "oklch(25% 0.0092 303.9)",
+          "oklch(38% 0.0130 303.9)",
+          "oklch(50% 0.0159 303.9)",
+          "oklch(62% 0.0159 303.9)",
+          "oklch(75% 0.0135 303.9)",
+          "oklch(86% 0.0095 303.9)",
+          "oklch(95% 0.0048 303.9)"
+        ]
+      },
+      "outline-dark": {
+        "role": "neutral",
+        "displayName": "Control outline in dark mode",
+        "tonalRamp": [
+          "oklch(15% 0.0058 304.0)",
+          "oklch(25% 0.0089 304.0)",
+          "oklch(38% 0.0126 304.0)",
+          "oklch(50% 0.0153 304.0)",
+          "oklch(62% 0.0153 304.0)",
+          "oklch(75% 0.0130 304.0)",
+          "oklch(86% 0.0092 304.0)",
+          "oklch(95% 0.0046 304.0)"
+        ]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "Action violet",
+        "tonalRamp": [
+          "oklch(15% 0.0416 292.8)",
+          "oklch(25% 0.0634 292.8)",
+          "oklch(38% 0.0897 292.8)",
+          "oklch(50% 0.1094 292.8)",
+          "oklch(62% 0.1094 292.8)",
+          "oklch(75% 0.0930 292.8)",
+          "oklch(86% 0.0656 292.8)",
+          "oklch(95% 0.0328 292.8)"
+        ]
+      },
+      "primary-dark": {
+        "role": "primary",
+        "displayName": "Action violet in dark mode",
+        "tonalRamp": [
+          "oklch(15% 0.0325 295.8)",
+          "oklch(25% 0.0495 295.8)",
+          "oklch(38% 0.0700 295.8)",
+          "oklch(50% 0.0854 295.8)",
+          "oklch(62% 0.0854 295.8)",
+          "oklch(75% 0.0726 295.8)",
+          "oklch(86% 0.0513 295.8)",
+          "oklch(95% 0.0256 295.8)"
+        ]
+      },
+      "primary-fill": {
+        "role": "primary",
+        "displayName": "Wordmark fill",
+        "tonalRamp": [
+          "oklch(15% 0.0110 301.0)",
+          "oklch(25% 0.0169 301.0)",
+          "oklch(38% 0.0238 301.0)",
+          "oklch(50% 0.0291 301.0)",
+          "oklch(62% 0.0291 301.0)",
+          "oklch(75% 0.0247 301.0)",
+          "oklch(86% 0.0174 301.0)",
+          "oklch(95% 0.0087 301.0)"
+        ]
+      },
+      "primary-fill-dark": {
+        "role": "primary",
+        "displayName": "Wordmark fill in dark mode",
+        "tonalRamp": [
+          "oklch(15% 0.0194 296.2)",
+          "oklch(25% 0.0296 296.2)",
+          "oklch(38% 0.0418 296.2)",
+          "oklch(50% 0.0510 296.2)",
+          "oklch(62% 0.0510 296.2)",
+          "oklch(75% 0.0434 296.2)",
+          "oklch(86% 0.0306 296.2)",
+          "oklch(95% 0.0153 296.2)"
+        ]
+      },
+      "primary-ink": {
+        "role": "primary",
+        "displayName": "Wordmark ink",
+        "tonalRamp": [
+          "oklch(15% 0.0296 294.8)",
+          "oklch(25% 0.0452 294.8)",
+          "oklch(38% 0.0639 294.8)",
+          "oklch(50% 0.0779 294.8)",
+          "oklch(62% 0.0779 294.8)",
+          "oklch(75% 0.0662 294.8)",
+          "oklch(86% 0.0467 294.8)",
+          "oklch(95% 0.0234 294.8)"
+        ]
+      },
+      "primary-ink-dark": {
+        "role": "primary",
+        "displayName": "Wordmark ink in dark mode",
+        "tonalRamp": [
+          "oklch(15% 0.0142 300.8)",
+          "oklch(25% 0.0217 300.8)",
+          "oklch(38% 0.0306 300.8)",
+          "oklch(50% 0.0374 300.8)",
+          "oklch(62% 0.0374 300.8)",
+          "oklch(75% 0.0318 300.8)",
+          "oklch(86% 0.0224 300.8)",
+          "oklch(95% 0.0112 300.8)"
+        ]
+      },
+      "control-fill": {
+        "role": "secondary",
+        "displayName": "Tonal control fill",
+        "tonalRamp": [
+          "oklch(15% 0.0136 298.0)",
+          "oklch(25% 0.0208 298.0)",
+          "oklch(38% 0.0293 298.0)",
+          "oklch(50% 0.0358 298.0)",
+          "oklch(62% 0.0358 298.0)",
+          "oklch(75% 0.0304 298.0)",
+          "oklch(86% 0.0215 298.0)",
+          "oklch(95% 0.0107 298.0)"
+        ]
+      },
+      "control-fill-dark": {
+        "role": "secondary",
+        "displayName": "Tonal control fill in dark mode",
+        "tonalRamp": [
+          "oklch(15% 0.0128 294.0)",
+          "oklch(25% 0.0195 294.0)",
+          "oklch(38% 0.0276 294.0)",
+          "oklch(50% 0.0337 294.0)",
+          "oklch(62% 0.0337 294.0)",
+          "oklch(75% 0.0286 294.0)",
+          "oklch(86% 0.0202 294.0)",
+          "oklch(95% 0.0101 294.0)"
+        ]
+      },
+      "control-ink": {
+        "role": "secondary",
+        "displayName": "Tonal control ink",
+        "tonalRamp": [
+          "oklch(15% 0.0128 294.0)",
+          "oklch(25% 0.0195 294.0)",
+          "oklch(38% 0.0276 294.0)",
+          "oklch(50% 0.0337 294.0)",
+          "oklch(62% 0.0337 294.0)",
+          "oklch(75% 0.0286 294.0)",
+          "oklch(86% 0.0202 294.0)",
+          "oklch(95% 0.0101 294.0)"
+        ]
+      },
+      "control-ink-dark": {
+        "role": "secondary",
+        "displayName": "Tonal control ink in dark mode",
+        "tonalRamp": [
+          "oklch(15% 0.0136 298.0)",
+          "oklch(25% 0.0208 298.0)",
+          "oklch(38% 0.0293 298.0)",
+          "oklch(50% 0.0358 298.0)",
+          "oklch(62% 0.0358 298.0)",
+          "oklch(75% 0.0304 298.0)",
+          "oklch(86% 0.0215 298.0)",
+          "oklch(95% 0.0107 298.0)"
+        ]
+      },
+      "celebration": {
+        "role": "primary",
+        "displayName": "Celebration surface",
+        "tonalRamp": [
+          "oklch(15% 0.0079 301.1)",
+          "oklch(25% 0.0120 301.1)",
+          "oklch(38% 0.0169 301.1)",
+          "oklch(50% 0.0207 301.1)",
+          "oklch(62% 0.0207 301.1)",
+          "oklch(75% 0.0176 301.1)",
+          "oklch(86% 0.0124 301.1)",
+          "oklch(95% 0.0062 301.1)"
+        ]
+      },
+      "celebration-dark": {
+        "role": "primary",
+        "displayName": "Celebration surface in dark mode",
+        "tonalRamp": [
+          "oklch(15% 0.0120 297.8)",
+          "oklch(25% 0.0184 297.8)",
+          "oklch(38% 0.0260 297.8)",
+          "oklch(50% 0.0317 297.8)",
+          "oklch(62% 0.0317 297.8)",
+          "oklch(75% 0.0269 297.8)",
+          "oklch(86% 0.0190 297.8)",
+          "oklch(95% 0.0095 297.8)"
+        ]
+      },
+      "celebration-ink": {
+        "role": "primary",
+        "displayName": "Celebration title",
+        "tonalRamp": [
+          "oklch(15% 0.0244 296.4)",
+          "oklch(25% 0.0373 296.4)",
+          "oklch(38% 0.0528 296.4)",
+          "oklch(50% 0.0643 296.4)",
+          "oklch(62% 0.0643 296.4)",
+          "oklch(75% 0.0547 296.4)",
+          "oklch(86% 0.0386 296.4)",
+          "oklch(95% 0.0193 296.4)"
+        ]
+      },
+      "celebration-ink-dark": {
+        "role": "primary",
+        "displayName": "Celebration title in dark mode",
+        "tonalRamp": [
+          "oklch(15% 0.0105 301.8)",
+          "oklch(25% 0.0160 301.8)",
+          "oklch(38% 0.0227 301.8)",
+          "oklch(50% 0.0277 301.8)",
+          "oklch(62% 0.0277 301.8)",
+          "oklch(75% 0.0235 301.8)",
+          "oklch(86% 0.0166 301.8)",
+          "oklch(95% 0.0083 301.8)"
+        ]
+      },
+      "celebration-muted": {
+        "role": "primary",
+        "displayName": "Celebration metadata",
+        "tonalRamp": [
+          "oklch(15% 0.0219 301.3)",
+          "oklch(25% 0.0334 301.3)",
+          "oklch(38% 0.0472 301.3)",
+          "oklch(50% 0.0576 301.3)",
+          "oklch(62% 0.0576 301.3)",
+          "oklch(75% 0.0489 301.3)",
+          "oklch(86% 0.0345 301.3)",
+          "oklch(95% 0.0173 301.3)"
+        ]
+      },
+      "celebration-muted-dark": {
+        "role": "primary",
+        "displayName": "Celebration metadata in dark mode",
+        "tonalRamp": [
+          "oklch(15% 0.0170 303.0)",
+          "oklch(25% 0.0260 303.0)",
+          "oklch(38% 0.0367 303.0)",
+          "oklch(50% 0.0448 303.0)",
+          "oklch(62% 0.0448 303.0)",
+          "oklch(75% 0.0381 303.0)",
+          "oklch(86% 0.0269 303.0)",
+          "oklch(95% 0.0134 303.0)"
+        ]
+      },
+      "date-tile": {
+        "role": "primary",
+        "displayName": "Calendar tile",
+        "tonalRamp": [
+          "oklch(15% 0.0134 303.8)",
+          "oklch(25% 0.0205 303.8)",
+          "oklch(38% 0.0290 303.8)",
+          "oklch(50% 0.0353 303.8)",
+          "oklch(62% 0.0353 303.8)",
+          "oklch(75% 0.0300 303.8)",
+          "oklch(86% 0.0212 303.8)",
+          "oklch(95% 0.0106 303.8)"
+        ]
+      },
+      "date-tile-dark": {
+        "role": "primary",
+        "displayName": "Calendar tile in dark mode",
+        "tonalRamp": [
+          "oklch(15% 0.0177 299.7)",
+          "oklch(25% 0.0270 299.7)",
+          "oklch(38% 0.0382 299.7)",
+          "oklch(50% 0.0465 299.7)",
+          "oklch(62% 0.0465 299.7)",
+          "oklch(75% 0.0396 299.7)",
+          "oklch(86% 0.0279 299.7)",
+          "oklch(95% 0.0140 299.7)"
+        ]
+      },
+      "liturgical-green": {
+        "role": "secondary",
+        "displayName": "Liturgical green",
+        "tonalRamp": [
+          "oklch(15% 0.0641 142.9)",
+          "oklch(25% 0.0979 142.9)",
+          "oklch(38% 0.1384 142.9)",
+          "oklch(50% 0.1688 142.9)",
+          "oklch(62% 0.1688 142.9)",
+          "oklch(75% 0.1435 142.9)",
+          "oklch(86% 0.1013 142.9)",
+          "oklch(95% 0.0506 142.9)"
+        ]
+      },
+      "liturgical-violet": {
+        "role": "secondary",
+        "displayName": "Liturgical violet",
+        "tonalRamp": [
+          "oklch(15% 0.0823 303.2)",
+          "oklch(25% 0.1256 303.2)",
+          "oklch(38% 0.1775 303.2)",
+          "oklch(50% 0.2165 303.2)",
+          "oklch(62% 0.2165 303.2)",
+          "oklch(75% 0.1840 303.2)",
+          "oklch(86% 0.1299 303.2)",
+          "oklch(95% 0.0650 303.2)"
+        ]
+      },
+      "liturgical-white": {
+        "role": "secondary",
+        "displayName": "Liturgical white",
+        "tonalRamp": [
+          "oklch(15% 0.0000 0.0)",
+          "oklch(25% 0.0000 0.0)",
+          "oklch(38% 0.0000 0.0)",
+          "oklch(50% 0.0000 0.0)",
+          "oklch(62% 0.0000 0.0)",
+          "oklch(75% 0.0000 0.0)",
+          "oklch(86% 0.0000 0.0)",
+          "oklch(95% 0.0000 0.0)"
+        ]
+      },
+      "liturgical-gold": {
+        "role": "secondary",
+        "displayName": "Liturgical gold",
+        "tonalRamp": [
+          "oklch(15% 0.0692 95.3)",
+          "oklch(25% 0.1057 95.3)",
+          "oklch(38% 0.1494 95.3)",
+          "oklch(50% 0.1822 95.3)",
+          "oklch(62% 0.1822 95.3)",
+          "oklch(75% 0.1549 95.3)",
+          "oklch(86% 0.1093 95.3)",
+          "oklch(95% 0.0547 95.3)"
+        ]
+      },
+      "liturgical-red": {
+        "role": "secondary",
+        "displayName": "Liturgical red",
+        "tonalRamp": [
+          "oklch(15% 0.0624 29.2)",
+          "oklch(25% 0.0952 29.2)",
+          "oklch(38% 0.1345 29.2)",
+          "oklch(50% 0.1641 29.2)",
+          "oklch(62% 0.1641 29.2)",
+          "oklch(75% 0.1395 29.2)",
+          "oklch(86% 0.0984 29.2)",
+          "oklch(95% 0.0492 29.2)"
+        ]
+      },
+      "liturgical-rose": {
+        "role": "secondary",
+        "displayName": "Liturgical rose",
+        "tonalRamp": [
+          "oklch(15% 0.0279 7.1)",
+          "oklch(25% 0.0427 7.1)",
+          "oklch(38% 0.0603 7.1)",
+          "oklch(50% 0.0735 7.1)",
+          "oklch(62% 0.0735 7.1)",
+          "oklch(75% 0.0625 7.1)",
+          "oklch(86% 0.0441 7.1)",
+          "oklch(95% 0.0221 7.1)"
+        ]
+      },
+      "liturgical-fallback": {
+        "role": "secondary",
+        "displayName": "Liturgical fallback",
+        "tonalRamp": [
+          "oklch(15% 0.0560 248.0)",
+          "oklch(25% 0.0855 248.0)",
+          "oklch(38% 0.1209 248.0)",
+          "oklch(50% 0.1475 248.0)",
+          "oklch(62% 0.1475 248.0)",
+          "oklch(75% 0.1253 248.0)",
+          "oklch(86% 0.0885 248.0)",
+          "oklch(95% 0.0442 248.0)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page titles and date numerals."
+      },
+      "celebration-title": {
+        "displayName": "Celebration title",
+        "purpose": "Feast title in the celebration card."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Reading rows and section headings."
+      },
+      "scripture": {
+        "displayName": "Scripture",
+        "purpose": "Selectable passage text."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Status and supporting messages."
+      },
+      "metadata": {
+        "displayName": "Metadata",
+        "purpose": "Citations, calendar details, and translation metadata."
+      },
+      "month": {
+        "displayName": "Month",
+        "purpose": "Uppercase label in the calendar tile."
+      }
+    },
+    "shadows": [
+      {
+        "name": "tab-frame",
+        "value": "Flutter Material elevation 8 with #201b3040 shadow color",
+        "purpose": "Lift the centered frame over the browser canvas."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Toolbar icon feedback and passage-reader entry."
+      },
+      {
+        "name": "toolbar-press",
+        "value": "120ms, scale(0.96)",
+        "purpose": "Pointer feedback on toolbar icons when motion is enabled."
+      },
+      {
+        "name": "reader-entry",
+        "value": "170ms, opacity 0 to 1, horizontal offset 1.8% to 0",
+        "purpose": "Bring the passage reader in as a panel on pointer activation. Reduced motion uses a 100ms fade."
+      },
+      {
+        "name": "reader-transition-outgoing",
+        "value": "110ms",
+        "purpose": "Fade out the previous panel during animated entry."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "tab-frame",
+        "value": "520px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Toolbar icon button",
+      "kind": "button",
+      "refersTo": "toolbar-icon",
+      "description": "Compact icon action with a tooltip and press feedback.",
+      "html": "<button type=\"button\" class=\"ds-icon\" title=\"Refresh readings\" aria-label=\"Refresh readings\"><svg aria-hidden=\"true\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M17.65 6.35A7.95 7.95 0 0 0 12 4a8 8 0 1 0 7.93 9h-2.02A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35Z\"/></svg></button>",
+      "css": ".ds-icon { background: transparent; color: #5f586b; display: inline-grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%; cursor: pointer; transition: scale 120ms cubic-bezier(.23, 1, .32, 1); } .ds-icon:hover { background: color-mix(in srgb, #544387 8%, transparent); } .ds-icon:focus-visible { outline: 2px solid #544387; outline-offset: -2px; } .ds-icon:active { scale: .96; } @media (prefers-reduced-motion: reduce) { .ds-icon { transition: none; } .ds-icon:active { scale: 1; } }"
+    },
+    {
+      "name": "Back button",
+      "kind": "nav",
+      "refersTo": "back-button",
+      "description": "Returns to the reading index from the reader or settings.",
+      "html": "<button type=\"button\" class=\"ds-back\"><svg aria-hidden=\"true\" width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2Z\"/></svg> All readings</button>",
+      "css": ".ds-back { display: inline-flex; align-items: center; gap: 8px; font: 500 14px/20px Inter, system-ui, sans-serif; min-height: 40px; padding: 0 16px 0 12px; border: 0; border-radius: 999px; color: #544387; background: transparent; cursor: pointer; } .ds-back:hover { background: color-mix(in srgb, #544387 8%, transparent); } .ds-back:focus-visible { outline: 2px solid #544387; outline-offset: -2px; }"
+    },
+    {
+      "name": "Tonal retry button",
+      "kind": "button",
+      "refersTo": "retry-button",
+      "description": "Starts another attempt from a recoverable reading status.",
+      "html": "<button type=\"button\" class=\"ds-retry\">Try again</button>",
+      "css": ".ds-retry { color: #484458; background: #e6dff9; font: 500 14px/20px Inter, system-ui, sans-serif; min-height: 40px; padding: 0 24px; border: 0; border-radius: 999px; cursor: pointer; } .ds-retry:hover { background: color-mix(in srgb, #484458 8%, #e6dff9); } .ds-retry:focus-visible { outline: 2px solid #544387; outline-offset: -2px; }"
+    },
+    {
+      "name": "Appearance selector",
+      "kind": "input",
+      "refersTo": "appearance-selected",
+      "description": "Shows one selected appearance within a single outlined control.",
+      "html": "<fieldset class=\"ds-segments\" aria-label=\"Appearance\"><label><input type=\"radio\" name=\"ds-appearance\" checked><span>System</span></label><label><input type=\"radio\" name=\"ds-appearance\"><span>Light</span></label><label><input type=\"radio\" name=\"ds-appearance\"><span>Dark</span></label></fieldset>",
+      "css": ".ds-segments { display: flex; margin: 0; padding: 0; border: 1px solid #79757f; border-radius: 999px; width: min(100%, 376px); overflow: hidden; font: 500 14px/20px Inter, system-ui, sans-serif; color: #23212a; } .ds-segments label { position: relative; min-width: 0; flex: 1; text-align: center; cursor: pointer; } .ds-segments label + label { border-left: 1px solid #79757f; } .ds-segments input { position: absolute; opacity: 0; } .ds-segments span { display: block; padding: 9px 6px; } .ds-segments input:checked + span { background: #e6dff9; color: #484458; } .ds-segments label:hover span { box-shadow: inset 0 0 0 999px rgb(84 67 135 / 8%); } .ds-segments input:focus-visible + span { outline: 2px solid #544387; outline-offset: -2px; }"
+    },
+    {
+      "name": "Settings dropdown",
+      "kind": "input",
+      "refersTo": "settings-field",
+      "description": "A full-width outlined field with a visible setting label.",
+      "html": "<label class=\"ds-field\"><span>Bible translation</span><select><option>World English Bible</option><option>King James Version</option></select></label>",
+      "css": ".ds-field { position: relative; display: block; width: min(100%, 376px); color: #5f586b; font: 12px/1.45 Inter, system-ui, sans-serif; } .ds-field span { position: absolute; z-index: 1; top: -9px; left: 11px; padding: 0 4px; background: #fdfcfe; } .ds-field select { width: 100%; background: #f7f5f9; color: #23212a; padding: 16px 12px; border: 1px solid #79757f; border-radius: 10px; font: 16px/1.5 Inter, system-ui, sans-serif; } .ds-field select:hover { border-color: #23212a; } .ds-field select:focus-visible { outline: 2px solid #544387; outline-offset: -2px; }"
+    },
+    {
+      "name": "Celebration card",
+      "kind": "card",
+      "refersTo": "celebration-card",
+      "description": "Pairs the calendar tile and liturgical indicator with the celebration name.",
+      "html": "<article class=\"ds-celebration\"><div class=\"ds-date\" aria-label=\"November 22\"><span>NOV</span><strong>22</strong></div><div class=\"ds-celebration-copy\"><h3>Our Lord Jesus Christ, King of the Universe</h3><p><i role=\"img\" aria-label=\"Liturgical color: white\" title=\"Liturgical color: white\"></i>Solemnity</p></div></article>",
+      "css": ".ds-celebration { display: flex; max-width: 376px; align-items: flex-start; gap: 13px; padding: 16px; border-radius: 14px; background: #f0ebfa; color: #32274b; font-family: Inter, system-ui, sans-serif; } .ds-date { flex: 0 0 55px; display: grid; justify-items: center; padding: 8px 0; background: #e5dbf4; border-radius: 9px; } .ds-date span { color: #615477; font-size: 10px; font-weight: 700; letter-spacing: .8px; } .ds-date strong { font: 600 25px/1.18 Inter, system-ui, sans-serif; letter-spacing: -.7px; font-variant-numeric: tabular-nums; } .ds-celebration-copy h3 { margin: 0; font: 600 19px/1.27 Inter, system-ui, sans-serif; letter-spacing: -.4px; } .ds-celebration-copy p { display: flex; gap: 6px; align-items: center; margin: 8px 0 0; color: #615477; font-size: 12px; line-height: 1.45; } .ds-celebration-copy i { display: inline-block; width: 7px; height: 7px; border: 1px solid rgb(35 33 42 / 28%); border-radius: 50%; background: #fff; }"
+    },
+    {
+      "name": "Reading row",
+      "kind": "nav",
+      "refersTo": "reading-row",
+      "description": "Opens the cited passage from the daily index.",
+      "html": "<button type=\"button\" class=\"ds-row\"><span><strong>Gospel</strong><small>Matthew 25:31–46</small></span><svg aria-hidden=\"true\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6Z\"/></svg></button>",
+      "css": ".ds-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: min(100%, 376px); text-align: start; padding: 10px 4px; color: #23212a; background: transparent; border: 0; font-family: Inter, system-ui, sans-serif; cursor: pointer; } .ds-row strong { display: block; font-size: 14px; line-height: 1.35; font-weight: 600; } .ds-row small { display: block; margin-top: 2px; color: #5f586b; font-size: 12px; line-height: 1.45; } .ds-row svg { color: #544387; flex: none; } .ds-row:hover { background: color-mix(in srgb, #544387 8%, transparent); } .ds-row:focus-visible { background: rgb(84 67 135 / 16%); outline: 2px solid #544387; outline-offset: -2px; }"
+    },
+    {
+      "name": "Reading status panel",
+      "kind": "card",
+      "refersTo": "status-panel",
+      "description": "Explains missing content and shows recovery when available.",
+      "html": "<div class=\"ds-status\" role=\"status\"><svg aria-hidden=\"true\" width=\"19\" height=\"19\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"m2 3.27 2.23 2.23A6 6 0 0 0 6 17h10.73l2 2H6A8 8 0 0 1 2.8 3.99L2 3.27Zm10 .73a7 7 0 0 1 6.94 6H19a5 5 0 0 1 2.76 9.17l-1.46-1.46A3 3 0 0 0 19 12h-1.77l-.28-1.72A5 5 0 0 0 9 7.05L7.59 5.64A6.97 6.97 0 0 1 12 4ZM3.41 2 22 20.59 20.59 22 2 3.41 3.41 2Z\"/></svg><div><strong>Passage text unavailable</strong><p>Bible API couldn’t provide this citation in the selected translation.</p><button type=\"button\" class=\"ds-retry\">Try again</button></div></div>",
+      "css": ".ds-status { display: flex; align-items: flex-start; gap: 11px; max-width: 376px; padding: 14px; background: #f7f5f9; color: #23212a; border-radius: 12px; font-family: Inter, system-ui, sans-serif; } .ds-status svg { flex: none; margin-top: 2px; color: #544387; } .ds-status strong { font: 600 14px/1.35 Inter, system-ui, sans-serif; } .ds-status p { margin: 3px 0 9px; color: #5f586b; font-size: 13px; line-height: 1.5; } .ds-retry { color: #484458; background: #e6dff9; font: 500 14px/20px Inter, system-ui, sans-serif; min-height: 40px; padding: 0 24px; border: 0; border-radius: 999px; cursor: pointer; } .ds-retry:hover { background: color-mix(in srgb, #484458 8%, #e6dff9); } .ds-retry:focus-visible { outline: 2px solid #544387; outline-offset: -2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Modern utility",
+    "overview": "Neutral chrome keeps daily lookup quick and gives the reading space to breathe. The date tile and celebration are the strongest visual cues in the index. In the reader, the passage label and citation carry that hierarchy into a simple text column.",
+    "keyCharacteristics": [
+      "Single-column layout with persistent context.",
+      "Inter headings and comfortably spaced scripture.",
+      "A restrained violet accent and a small liturgical color marker."
+    ],
+    "rules": [],
+    "dos": [
+      "Do use the same content gutter for the index, reader, settings, and source footer.",
+      "Do keep citations visible when passage text is unavailable.",
+      "Do keep liturgical color in the indicator and its label."
+    ],
+    "donts": []
+  }
+}

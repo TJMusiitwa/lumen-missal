@@ -1,21 +1,15 @@
 import 'dart:convert';
-import 'package:material_ui/material_ui.dart';
+
+import 'package:flutter/material.dart';
 
 import 'storage_impl.dart' as impl;
 
-class Settings {
-  final ThemeMode themeMode;
-  final String bibleTranslation;
-  final String calendarType; // 'general', 'nation', 'diocese'
-  final String calendarId; // e.g., 'US', 'boston_us'
-
-  Settings({
-    this.themeMode = ThemeMode.system,
-    this.bibleTranslation = 'web',
-    this.calendarType = 'general',
-    this.calendarId = '',
-  });
-
+class const Settings({
+  final ThemeMode themeMode = ThemeMode.system,
+  final String bibleTranslation = 'web',
+  final String calendarType = 'general',
+  final String calendarId = '',
+}) {
   Settings copyWith({
     ThemeMode? themeMode,
     String? bibleTranslation,
@@ -40,11 +34,24 @@ class Settings {
   }
 
   factory Settings.fromJson(Map<String, dynamic> json) {
+    final calendar = switch (json) {
+      {'calendarType': final String type, 'calendarId': final String id}
+          when (type == 'nation' || type == 'diocese') && id.isNotEmpty =>
+        (type, id),
+      _ => ('general', ''),
+    };
     return Settings(
-      themeMode: ThemeMode.values[json['themeMode'] ?? ThemeMode.system.index],
-      bibleTranslation: json['bibleTranslation'] ?? 'web',
-      calendarType: json['calendarType'] ?? 'general',
-      calendarId: json['calendarId'] ?? '',
+      themeMode: switch (json['themeMode']) {
+        final int index when index >= 0 && index < ThemeMode.values.length =>
+          ThemeMode.values[index],
+        _ => ThemeMode.system,
+      },
+      bibleTranslation: switch (json['bibleTranslation']) {
+        final String id when id.isNotEmpty => id,
+        _ => 'web',
+      },
+      calendarType: calendar.$1,
+      calendarId: calendar.$2,
     );
   }
 }
