@@ -7,36 +7,39 @@ ThemeData popupTheme(Brightness brightness) {
   final dark = brightness == Brightness.dark;
   final colors =
       ColorScheme.fromSeed(
-        seedColor: const Color(0xff6455a4),
+        seedColor: dark ? const Color(0xff718597) : const Color(0xff6455a4),
         brightness: brightness,
       ).copyWith(
-        surface: dark ? const Color(0xff1a1a20) : const Color(0xfffdfcfe),
-        onSurface: dark ? const Color(0xfff3eff7) : const Color(0xff23212a),
+        surface: dark ? const Color(0xff1b1d20) : const Color(0xfffdfcfe),
+        onSurface: dark ? const Color(0xfff0f2f4) : const Color(0xff23212a),
         onSurfaceVariant: dark
-            ? const Color(0xffbcb6c7)
+            ? const Color(0xffb9c0c7)
             : const Color(0xff5f586b),
         surfaceContainerLow: dark
-            ? const Color(0xff222128)
+            ? const Color(0xff23262a)
             : const Color(0xfff7f5f9),
         surfaceContainer: dark
-            ? const Color(0xff2a2731)
+            ? const Color(0xff2b2f34)
             : const Color(0xffefedf4),
         outlineVariant: dark
-            ? const Color(0xff35323e)
+            ? const Color(0xff373c42)
             : const Color(0xffe3dfeb),
-        primary: dark ? const Color(0xffd0c1fe) : const Color(0xff544387),
+        outline: dark ? const Color(0xff8a929a) : null,
+        secondaryContainer: dark ? const Color(0xff37434d) : null,
+        onSecondaryContainer: dark ? const Color(0xffdfebf4) : null,
+        primary: dark ? const Color(0xffc4d3df) : const Color(0xff544387),
         primaryContainer: dark
-            ? const Color(0xff39314e)
+            ? const Color(0xff303943)
             : const Color(0xffece5fa),
         onPrimaryContainer: dark
-            ? const Color(0xffede4ff)
+            ? const Color(0xffe3ebf2)
             : const Color(0xff30234f),
       );
   return ThemeData(
     colorScheme: colors,
     fontFamily: 'Inter',
     scaffoldBackgroundColor: dark
-        ? const Color(0xff121217)
+        ? const Color(0xff111315)
         : const Color(0xffecebf0),
     dividerColor: colors.outlineVariant,
     textSelectionTheme: TextSelectionThemeData(
@@ -98,7 +101,9 @@ class const PopupFrame(final Widget child, {super.key})
                   borderRadius: BorderRadius.circular(16),
                   clipBehavior: Clip.antiAlias,
                   elevation: 8,
-                  shadowColor: const Color(0x40201b30),
+                  shadowColor: colors.brightness == Brightness.dark
+                      ? Colors.black54
+                      : const Color(0x40201b30),
                   child: child,
                 ),
               ),

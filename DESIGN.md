@@ -3,29 +3,29 @@ name: Lumen Missal
 description: A compact, neutral interface for daily liturgical readings.
 colors:
   surface: "#fdfcfe"
-  surface-dark: "#1a1a20"
+  surface-dark: "#1b1d20"
   canvas: "#ecebf0"
-  canvas-dark: "#121217"
+  canvas-dark: "#111315"
   ink: "#23212a"
-  ink-dark: "#f3eff7"
+  ink-dark: "#f0f2f4"
   muted-ink: "#5f586b"
-  muted-ink-dark: "#bcb6c7"
+  muted-ink-dark: "#b9c0c7"
   low-surface: "#f7f5f9"
-  low-surface-dark: "#222128"
+  low-surface-dark: "#23262a"
   divider: "#e3dfeb"
-  divider-dark: "#35323e"
+  divider-dark: "#373c42"
   outline: "#79757f"
-  outline-dark: "#938f99"
+  outline-dark: "#8a929a"
   primary: "#544387"
-  primary-dark: "#d0c1fe"
+  primary-dark: "#c4d3df"
   primary-fill: "#ece5fa"
-  primary-fill-dark: "#39314e"
+  primary-fill-dark: "#303943"
   primary-ink: "#30234f"
-  primary-ink-dark: "#ede4ff"
+  primary-ink-dark: "#e3ebf2"
   control-fill: "#e6dff9"
-  control-fill-dark: "#484458"
+  control-fill-dark: "#37434d"
   control-ink: "#484458"
-  control-ink-dark: "#e6dff9"
+  control-ink-dark: "#dfebf4"
   liturgical-green: "#228b22"
   liturgical-violet: "#6a0dad"
   liturgical-white: "#ffffff"
@@ -126,7 +126,7 @@ Neutral chrome keeps daily lookup quick and gives the reading space to breathe. 
 
 ## Colors
 
-Use violet for general actions and the book mark. The first recognised LitCal colour lightly tints the celebration card and supplies the accent for the selected date, reading chevrons, and the open citation. Blend the accent with the theme’s ink to keep it readable. Label every recognised colour option. The card uses the low surface when no recognised colour is available.
+Use violet for general actions and the book mark in light mode. Dark mode uses graphite surfaces and cool gray accents. The first recognised LitCal colour lightly tints the celebration card and supplies the accent for the selected date, reading chevrons, and the open citation. Blend the accent with the theme’s ink to keep it readable. Label every recognised colour option. The card uses the low surface when no recognised colour is available.
 
 ## Typography
 
