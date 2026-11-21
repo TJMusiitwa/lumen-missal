@@ -69,7 +69,7 @@ class BibleApi {
             },
           )
           .replaceFirstMapped(
-            RegExp(r'(^.+?\s+\d+)\s*,\s*(?=\d)'),
+            RegExp(r'(^[^:]+?\s+\d+)\s*,\s*(?=\d)'),
             (match) => '${match[1]}:',
           );
       if (citation.isEmpty) {

@@ -99,7 +99,7 @@ void main() {
           pathSegments: [citation],
           queryParameters: {'translation': 'web'},
         );
-        when(client.get(lookup('Psalm 103:1-2,4'))).thenAnswer(
+        when(client.get(lookup('Psalm 103:1,2,4'))).thenAnswer(
           (_) async => http.Response('{"text":"First section"}', 200),
         );
         when(client.get(lookup('Psalm 104:5'))).thenAnswer(
@@ -107,7 +107,7 @@ void main() {
         );
 
         expect(
-          await api.fetchPassage('Cf. Psalm 103 (102): 1–2a.4; 104:5b'),
+          await api.fetchPassage('Cf. Psalm 103 (102): 1, 2a.4; 104:5b'),
           'First section\n\nSecond section',
         );
       },
