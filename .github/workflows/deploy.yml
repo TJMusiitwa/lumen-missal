@@ -5,18 +5,27 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          flutter-version: '3.47.8'
           cache: true
 
       - name: Install Dart/Flutter dependencies
@@ -37,74 +46,99 @@ jobs:
       - name: Compile Drift Worker
         run: dart compile js web/worker.dart -o build/web/worker.dart.js
 
+      - name: Set extension version
+        run: |
+          version=$(jq -er '.version' build/web/version.json)
+          if [[ "$GITHUB_REF_NAME" != "v$version" ]] ||
+            ! jq -en --arg v "$version" '
+              ($v | test("^(0|[1-9][0-9]{0,4})[.](0|[1-9][0-9]{0,4})[.](0|[1-9][0-9]{0,4})$")) and
+              ($v | split(".") | map(tonumber) | all(. <= 65535) and any(. > 0))
+            ' >/dev/null; then
+            echo "::error::Use a vMAJOR.MINOR.PATCH tag matching pubspec.yaml and a valid extension version."
+            exit 1
+          fi
+          jq --arg version "$version" '.version = $version' build/web/manifest.json > build/manifest.json
+          mv build/manifest.json build/web/manifest.json
+
       - name: Package Chrome Extension
         working-directory: build/web
         run: |
-          zip -r ../../extension-chrome.zip .
-        # extension-chrome.zip will be at build/extension-chrome.zip
+          zip -r ../extension-chrome.zip .
+          unzip -tq ../extension-chrome.zip
+          unzip -p ../extension-chrome.zip manifest.json | cmp manifest.json -
 
-      - name: Set up Node.js (for web-ext and Chrome upload)
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
+      - name: Install Firefox packaging tools
+        run: npm install --global web-ext@10.5.0
 
-      - name: Install web-ext and sign Firefox Addon
-        run: |
-          npm install --global web-ext
-          mkdir -p signed
-          web-ext sign --source build/web \
-            --api-key "${{ secrets.FIREFOX_API_KEY }}" \
-            --api-secret "${{ secrets.FIREFOX_API_SECRET }}" \
-            --artifacts-dir signed
+      - name: Sign Firefox extension for GitHub distribution
         env:
-          FIREFOX_API_KEY: ${{ secrets.FIREFOX_API_KEY }}
-          FIREFOX_API_SECRET: ${{ secrets.FIREFOX_API_SECRET }}
-
-      - name: Find signed XPI
-        id: find_xpi
+          WEB_EXT_API_KEY: ${{ secrets.FIREFOX_API_KEY }}
+          WEB_EXT_API_SECRET: ${{ secrets.FIREFOX_API_SECRET }}
         run: |
-          set -e
-          XPI=$(ls signed/*.xpi 2>/dev/null || true)
-          if [ -z "$XPI" ]; then
-            echo "No signed XPI found in signed/; web-ext may have failed."
+          git archive --format=zip --output=build/firefox-source.zip HEAD
+          web-ext sign --source-dir build/web --channel unlisted \
+            --upload-source-code build/firefox-source.zip --artifacts-dir signed
+          shopt -s nullglob
+          packages=(signed/*.xpi)
+          if [ "${#packages[@]}" -ne 1 ]; then
+            echo "::error::Expected exactly one signed Firefox XPI."
             exit 1
           fi
-          echo "SIGNED_XPI=$XPI" >> $GITHUB_ENV
-          echo "::notice::Found signed XPI: $XPI"
+          mv "${packages[0]}" build/firefox-addon.xpi
+          unzip -tq build/firefox-addon.xpi
+          unzip -p build/firefox-addon.xpi manifest.json | jq -e --arg tag "$GITHUB_REF_NAME" '"v" + .version == $tag'
 
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        with:
-          tag_name: ${{ github.ref_name }}
-          release_name: Release ${{ github.ref_name }}
-          body: Automated release for ${{ github.ref_name }}
-          draft: false
-          prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Chrome zip to Release
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/extension-chrome.zip
-          asset_name: extension-chrome.zip
-          asset_content_type: application/zip
-
-      - name: Upload Firefox xpi to Release
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.SIGNED_XPI }}
-          asset_name: firefox-addon.xpi
-          asset_content_type: application/x-xpinstall
+      - name: Create or update GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          TAG="$GITHUB_REF_NAME"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" \
+              build/extension-chrome.zip \
+              build/firefox-addon.xpi \
+              --clobber
+          else
+            gh release create "$TAG" \
+              build/extension-chrome.zip \
+              build/firefox-addon.xpi \
+              --title "Release $TAG" \
+              --generate-notes
+          fi
 
       - name: Publish to Chrome Web Store
-        uses: ExtensionNinja/extension-publish@main
-        with:
-          extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
-          client-id: ${{ secrets.CLIENT_ID }}
-          client-secret: ${{ secrets.CLIENT_SECRET }}
-          refresh-token: ${{ secrets.REFRESH_TOKEN }}
-          zip-path: build/extension-chrome.zip
-          publish: true
+        env:
+          PUBLISHER_ID: ${{ vars.CHROME_PUBLISHER_ID }}
+          EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+        run: |
+          : "${PUBLISHER_ID:?Set the CHROME_PUBLISHER_ID repository variable}"
+          : "${EXTENSION_ID:?Set the CHROME_EXTENSION_ID repository secret}"
+          token=$(curl --fail-with-body --silent --show-error https://oauth2.googleapis.com/token \
+            --data-urlencode "client_id=$CLIENT_ID" \
+            --data-urlencode "client_secret=$CLIENT_SECRET" \
+            --data-urlencode "refresh_token=$REFRESH_TOKEN" \
+            --data-urlencode "grant_type=refresh_token" | jq -er '.access_token')
+          echo "::add-mask::$token"
+
+          api=https://chromewebstore.googleapis.com
+          item="v2/publishers/$PUBLISHER_ID/items/$EXTENSION_ID"
+          auth="Authorization: Bearer $token"
+          state=$(curl --fail-with-body --silent --show-error -H "$auth" \
+            -X POST -T build/extension-chrome.zip "$api/upload/$item:upload" |
+            jq -er '.uploadState')
+          for attempt in {1..30}; do
+            [[ "$state" == IN_PROGRESS ]] || break
+            sleep 10
+            state=$(curl --fail-with-body --silent --show-error -H "$auth" \
+              "$api/$item:fetchStatus" | jq -er '.lastAsyncUploadState')
+          done
+          if [[ "$state" != SUCCEEDED ]]; then
+            echo "::error::Chrome Web Store upload ended in state $state."
+            exit 1
+          fi
+          curl --fail-with-body --silent --show-error -H "$auth" \
+            -H 'Content-Type: application/json' -d '{}' "$api/$item:publish"

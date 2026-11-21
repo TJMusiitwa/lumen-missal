@@ -40,6 +40,12 @@ To preview the app in a regular browser tab, serve `build/web` over loopback wit
 
 To regenerate Drift and Mockito code after changes to their declarations, run `dart run build_runner build`.
 
+## Release packages
+
+Set `version` in `pubspec.yaml` and tag the release `vMAJOR.MINOR.PATCH` to match its first three components. The release workflow stamps both browser packages with that version. To reproduce the submitted Firefox build from the source archive, use Flutter 3.47.8, run the build commands above, and then stamp the generated manifest with `jq --arg version "$(jq -r .version build/web/version.json)" '.version = $version' build/web/manifest.json > build/manifest.json && mv build/manifest.json build/web/manifest.json`.
+
+GitHub Releases distributes the unlisted, Mozilla-signed Firefox XPI and the Chromium ZIP. Chrome Web Store publishing uses the existing OAuth secrets and the `CHROME_PUBLISHER_ID` repository variable from the store's Publisher Settings. The Chrome Web Store item must already exist.
+
 ## Open source
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and the [MIT License](LICENSE). The bundled Inter font is distributed under its [SIL Open Font License](assets/fonts/OFL.txt).
