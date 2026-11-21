@@ -2,9 +2,20 @@
 
 Lumen Missal is a Flutter browser extension for the daily Catholic liturgical readings. Choose a general, national, or diocesan calendar and a Bible translation in Settings.
 
+## Inside the popup
+
+<p>
+  <img src="docs/screenshots/reading-index.jpg" width="310" alt="Reading index for November 24 with a red celebration card, date arrows, and a Today button">
+  <img src="docs/screenshots/passage-reader.jpg" width="310" alt="An open scripture passage with its citation and a button to return to all readings">
+</p>
+
+Use the arrows to move one day at a time or select the date to jump anywhere within seven days before or after today. **Today** returns to the current date. Open a citation to read its passage in the selected Bible translation.
+
+The celebration card lists the colours supplied by LitCal. The first recognised colour also tints the card, selected date, and reading accents.
+
 ## Readings and storage
 
-[LitCal v5](https://litcal.johnromanodorazio.com/dist/) provides the celebration and reading citations for the browser's local date. The extension selects the daytime celebration and fetches scripture text from [Bible API](https://bible-api.com/). It keeps the original citations visible. Bible API serves whole verses, including when a citation specifies part of a verse.
+[LitCal v5](https://litcal.johnromanodorazio.com/dist/) provides the celebration and reading citations for the selected date. The extension selects the daytime celebration and fetches scripture text from [Bible API](https://bible-api.com/). It keeps the original citations visible. Bible API serves whole verses, including when a citation specifies part of a verse.
 
 The extension caches a day's calendar and successful passages in Drift, scoped to the selected calendar and Bible translation. A failed refresh leaves saved passages available. Settings use browser local storage and app state uses Flutter's ChangeNotifier. Inter is bundled so the popup's typography works offline.
 
