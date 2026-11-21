@@ -42,52 +42,47 @@ void main() {
     await database.close();
   });
 
-  test(
-    'loadTodayReading fetches data on cache miss and updates state correctly',
-    () async {
-      when(
-        mockLitCalApi.fetchTodayData(
-          type: anyNamed('type'),
-          id: anyNamed('id'),
-        ),
-      ).thenAnswer((_) async {
-        return LitCalResponse.fromJson({
-          "litcal": {
-            "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}":
-                [
-                  {
-                    "name": "Test Day",
-                    "color": ["green"],
-                    "readings": {"gospel": "John 3:16"},
-                  },
-                ],
-          },
-        });
+  test('loadTodayReading fetches data on cache miss and updates state correctly', () async {
+    when(
+      mockLitCalApi.fetchTodayData(type: anyNamed('type'), id: anyNamed('id')),
+    ).thenAnswer((_) async {
+      return LitCalResponse.fromJson({
+        "litcal": {
+          "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}":
+              [
+                {
+                  "name": "Test Day",
+                  "date": DateTime.now().toIso8601String(),
+                  "color": ["green"],
+                  "readings": {"gospel": "John 3:16"},
+                },
+              ],
+        },
       });
+    });
 
-      when(
-        mockBibleApi.fetchPassage(
-          'John 3:16',
-          translation: anyNamed('translation'),
-        ),
-      ).thenAnswer((_) async => 'Test Passage');
+    when(
+      mockBibleApi.fetchPassage(
+        'John 3:16',
+        translation: anyNamed('translation'),
+      ),
+    ).thenAnswer((_) async => 'Test Passage');
 
-      expect(notifier.isLoading, isFalse);
-      expect(notifier.data, isNull);
+    expect(notifier.isLoading, isFalse);
+    expect(notifier.data, isNull);
 
-      final future = notifier.loadTodayReading();
+    final future = notifier.loadTodayReading();
 
-      expect(notifier.isLoading, isTrue);
+    expect(notifier.isLoading, isTrue);
 
-      await future;
+    await future;
 
-      expect(notifier.isLoading, isFalse);
-      expect(notifier.data, isNotNull);
-      expect(notifier.data!.title, 'Test Day');
-      expect(notifier.data!.liturgicalColorName, 'green');
-      expect(notifier.error, isNull);
-    },
-  );
+    expect(notifier.isLoading, isFalse);
+    expect(notifier.data, isNotNull);
+    expect(notifier.data!.title, 'Test Day');
+    expect(notifier.data!.liturgicalColorName, 'green');
+    expect(notifier.error, isNull);
+  });
 
   test('loadTodayReading handles errors correctly', () async {
     when(

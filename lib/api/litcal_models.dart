@@ -28,10 +28,55 @@ class LitCalEvent {
   final String name;
   final List<String> color;
   final LitCalReadings? readings;
+  final String? gradeLcl;
+  final String? gradeAbbr;
+  final String? liturgicalYear;
+  final String? liturgicalSeasonLcl;
+  final int? psalterWeek;
+  final bool isVigilMass;
+  final String? commonLcl;
+  final DateTime date;
 
-  LitCalEvent({required this.name, required this.color, this.readings});
+  LitCalEvent({
+    required this.name,
+    required this.color,
+    this.readings,
+    this.gradeLcl,
+    this.gradeAbbr,
+    this.liturgicalYear,
+    this.liturgicalSeasonLcl,
+    this.psalterWeek,
+    this.isVigilMass = false,
+    this.commonLcl,
+    required this.date,
+  });
 
   factory LitCalEvent.fromJson(Map<String, dynamic> json) {
+    // Handle 'date'
+    DateTime? eventDate;
+    if (json.containsKey('date')) {
+      if (json['date'] is int) {
+        eventDate = DateTime.fromMillisecondsSinceEpoch(
+          (json['date'] as int) * 1000,
+          isUtc: true,
+        );
+      } else if (json['date'] is String) {
+        eventDate = DateTime.tryParse(json['date'] as String);
+      }
+    } else if (json.containsKey('Date')) {
+      if (json['Date'] is int) {
+        eventDate = DateTime.fromMillisecondsSinceEpoch(
+          (json['Date'] as int) * 1000,
+          isUtc: true,
+        );
+      } else if (json['Date'] is String) {
+        eventDate = DateTime.tryParse(json['Date'] as String);
+      }
+    }
+
+    if (eventDate == null) {
+      throw Exception('Missing required field: date');
+    }
     // Handle 'name' or 'Name'
     String eventName =
         json['name'] as String? ??
@@ -39,7 +84,7 @@ class LitCalEvent {
         'Today\'s Reading';
 
     // Handle 'color' or 'Color'
-    List<String> eventColor = ['green'];
+    List<String> eventColor = [];
     if (json.containsKey('color')) {
       if (json['color'] is List && (json['color'] as List).isNotEmpty) {
         eventColor = (json['color'] as List).map((c) => c.toString()).toList();
@@ -65,6 +110,14 @@ class LitCalEvent {
       name: eventName,
       color: eventColor,
       readings: eventReadings,
+      gradeLcl: json['grade_lcl'] as String?,
+      gradeAbbr: json['grade_abbr'] as String?,
+      liturgicalYear: json['liturgical_year'] as String?,
+      liturgicalSeasonLcl: json['liturgical_season_lcl'] as String?,
+      psalterWeek: json['psalter_week'] as int?,
+      isVigilMass: json['is_vigil_mass'] as bool? ?? false,
+      commonLcl: json['common_lcl'] as String?,
+      date: eventDate,
     );
   }
 }

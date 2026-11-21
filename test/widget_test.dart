@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lumen_missal/main.dart';
+import 'package:lumen_missal/state/calendar_notifier.dart';
 import 'package:lumen_missal/state/reading_notifier.dart';
 import 'package:lumen_missal/settings/settings_notifier.dart';
 import 'package:lumen_missal/database/database.dart';
@@ -24,6 +25,7 @@ void main() {
       MyApp(
         readingNotifier: mockNotifier,
         settingsNotifier: mockSettingsNotifier,
+        calendarNotifier: CalendarNotifier(),
       ),
     );
 

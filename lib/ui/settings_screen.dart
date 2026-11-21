@@ -1,17 +1,38 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+
 import '../settings/settings_notifier.dart';
+import '../state/calendar_notifier.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   final SettingsNotifier settingsNotifier;
+  final CalendarNotifier calendarNotifier;
 
-  const SettingsScreen({super.key, required this.settingsNotifier});
+  const SettingsScreen({
+    super.key,
+    required this.settingsNotifier,
+    required this.calendarNotifier,
+  });
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    widget.calendarNotifier.loadMetadata();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
       body: ListenableBuilder(
-        listenable: settingsNotifier,
+        listenable: Listenable.merge([
+          widget.settingsNotifier,
+          widget.calendarNotifier,
+        ]),
         builder: (context, child) {
           return ListView(
             padding: const EdgeInsets.all(16.0),
@@ -59,9 +80,9 @@ class SettingsScreen extends StatelessWidget {
                 icon: Icon(Icons.dark_mode),
               ),
             ],
-            selected: {settingsNotifier.themeMode},
+            selected: {widget.settingsNotifier.themeMode},
             onSelectionChanged: (Set<ThemeMode> newSelection) {
-              settingsNotifier.updateThemeMode(newSelection.first);
+              widget.settingsNotifier.updateThemeMode(newSelection.first);
             },
           ),
         ),
@@ -86,7 +107,8 @@ class SettingsScreen extends StatelessWidget {
             labelText: 'Translation',
             border: OutlineInputBorder(),
           ),
-          value: settingsNotifier.bibleTranslation,
+          initialValue: widget.settingsNotifier.bibleTranslation,
+          isExpanded: true,
           items: const [
             DropdownMenuItem(
               value: 'cherokee',
@@ -146,7 +168,7 @@ class SettingsScreen extends StatelessWidget {
           ],
           onChanged: (value) {
             if (value != null) {
-              settingsNotifier.updateBibleTranslation(value);
+              widget.settingsNotifier.updateBibleTranslation(value);
             }
           },
         ),
@@ -156,45 +178,58 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _buildCalendarSection(BuildContext context) {
-    // Basic mapping of nations and their dioceses
-    const Map<String, List<Map<String, String>>> calendarOptions = {
-      'General Roman': [],
-      'IT': [
-        {'id': 'romamo_it', 'name': 'Rome'},
-      ],
-      'US': [
-        {'id': 'boston_us', 'name': 'Boston'},
-      ],
-      'NL': [],
-      'VA': [],
-      'CA': [],
-    };
+    final metadata = widget.calendarNotifier.metadata;
 
-    final nations = calendarOptions.keys.toList();
+    if (widget.calendarNotifier.isLoading) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (widget.calendarNotifier.error != null) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(
+          'Error loading calendars: ${widget.calendarNotifier.error}',
+          style: const TextStyle(color: Colors.red),
+        ),
+      );
+    }
+
+    if (metadata == null) {
+      return const SizedBox.shrink();
+    }
+
+    final nations = metadata.nations;
+    final nationKeys = nations.keys.toList();
 
     // Determine current selected nation based on calendarId if type is diocese
-    String currentNation = 'General Roman';
-    if (settingsNotifier.calendarType == 'nation') {
-      currentNation = settingsNotifier.calendarId;
-      if (!nations.contains(currentNation)) currentNation = 'General Roman';
-    } else if (settingsNotifier.calendarType == 'diocese') {
+    String currentNation = 'general';
+    if (widget.settingsNotifier.calendarType == 'nation') {
+      currentNation = widget.settingsNotifier.calendarId;
+    } else if (widget.settingsNotifier.calendarType == 'diocese') {
       // Find the nation for the current diocese
-      for (final entry in calendarOptions.entries) {
-        if (entry.value.any((d) => d['id'] == settingsNotifier.calendarId)) {
+      for (final entry in metadata.dioceses.entries) {
+        if (entry.value.any(
+          (d) => d['id'] == widget.settingsNotifier.calendarId,
+        )) {
           currentNation = entry.key;
           break;
         }
       }
     }
 
-    final diocesesForNation = calendarOptions[currentNation] ?? [];
+    final diocesesForNation = metadata.dioceses[currentNation] ?? [];
 
     String? currentDiocese;
-    if (settingsNotifier.calendarType == 'diocese') {
+    if (widget.settingsNotifier.calendarType == 'diocese') {
       if (diocesesForNation.any(
-        (d) => d['id'] == settingsNotifier.calendarId,
+        (d) => d['id'] == widget.settingsNotifier.calendarId,
       )) {
-        currentDiocese = settingsNotifier.calendarId;
+        currentDiocese = widget.settingsNotifier.calendarId;
       }
     }
 
@@ -213,21 +248,22 @@ class SettingsScreen extends StatelessWidget {
             labelText: 'National / General Calendar',
             border: OutlineInputBorder(),
           ),
-          value: currentNation,
-          items: nations.map((nation) {
-            return DropdownMenuItem(
-              value: nation,
-              child: Text(
-                nation == 'General Roman' ? 'General Roman Calendar' : nation,
-              ),
-            );
-          }).toList(),
+          initialValue: currentNation,
+          items: [
+            const DropdownMenuItem(
+              value: 'general',
+              child: Text('General Roman Calendar'),
+            ),
+            ...nationKeys.map((key) {
+              return DropdownMenuItem(value: key, child: Text(nations[key]!));
+            }),
+          ],
           onChanged: (value) {
             if (value != null) {
-              if (value == 'General Roman') {
-                settingsNotifier.updateCalendar('general', '');
+              if (value == 'general') {
+                widget.settingsNotifier.updateCalendar('general', '');
               } else {
-                settingsNotifier.updateCalendar('nation', value);
+                widget.settingsNotifier.updateCalendar('nation', value);
               }
             }
           },
@@ -239,7 +275,7 @@ class SettingsScreen extends StatelessWidget {
               labelText: 'Diocesan Calendar (Optional)',
               border: OutlineInputBorder(),
             ),
-            value: currentDiocese,
+            initialValue: currentDiocese,
             items: [
               const DropdownMenuItem(
                 value: null,
@@ -254,10 +290,10 @@ class SettingsScreen extends StatelessWidget {
             ],
             onChanged: (value) {
               if (value != null) {
-                settingsNotifier.updateCalendar('diocese', value);
+                widget.settingsNotifier.updateCalendar('diocese', value);
               } else {
                 // If none is selected, revert to the nation
-                settingsNotifier.updateCalendar('nation', currentNation);
+                widget.settingsNotifier.updateCalendar('nation', currentNation);
               }
             },
           ),

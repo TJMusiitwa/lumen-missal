@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
 
@@ -10,7 +12,7 @@ DatabaseConnection connect() {
         driftWorkerUri: Uri.parse('worker.dart.js'),
       );
       if (result.missingFeatures.isNotEmpty) {
-        print(
+        log(
           'Using ${result.chosenImplementation} due to missing browser features: ${result.missingFeatures}',
         );
       }

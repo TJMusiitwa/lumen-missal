@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:drift/drift.dart' show Value;
 import '../api/litcal_api.dart';
 import '../api/bible_api.dart';
 import '../database/database.dart';
@@ -10,12 +11,22 @@ class ReadingData {
   final String title;
   final String liturgicalColorName;
   final String readingsJson;
+  final String? grade;
+  final String? season;
+  final int? psalterWeek;
+  final String? liturgicalYear;
+  final DateTime date;
 
   ReadingData({
     required this.dateKey,
     required this.title,
     required this.liturgicalColorName,
     required this.readingsJson,
+    this.grade,
+    this.season,
+    this.psalterWeek,
+    this.liturgicalYear,
+    required this.date,
   });
 }
 
@@ -83,6 +94,11 @@ class ReadingNotifier extends ChangeNotifier {
           title: cached.title,
           liturgicalColorName: cached.liturgicalColorName,
           readingsJson: cached.readingsJson,
+          grade: cached.grade,
+          season: cached.season,
+          psalterWeek: cached.psalterWeek,
+          liturgicalYear: cached.liturgicalYear,
+          date: cached.date,
         );
       } else {
         // Cache Miss or Force Refresh
@@ -105,11 +121,22 @@ class ReadingNotifier extends ChangeNotifier {
         final baseDateKey =
             '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
 
+        String? grade;
+        String? season;
+        int? psalterWeek;
+        String? liturgicalYear;
+        DateTime? eventDate;
+
         if (litCalResponse.litcal.containsKey(baseDateKey)) {
           final dayDataList = litCalResponse.litcal[baseDateKey]!;
           if (dayDataList.isNotEmpty) {
             final dayData = dayDataList.first;
             title = dayData.name;
+            grade = dayData.gradeLcl;
+            season = dayData.liturgicalSeasonLcl;
+            psalterWeek = dayData.psalterWeek;
+            liturgicalYear = dayData.liturgicalYear;
+            eventDate = dayData.date;
 
             if (dayData.color.isNotEmpty) {
               color = dayData.color.first;
@@ -166,6 +193,11 @@ class ReadingNotifier extends ChangeNotifier {
                 title: title,
                 liturgicalColorName: color,
                 readingsJson: readingsJsonString,
+                grade: Value(grade),
+                season: Value(season),
+                psalterWeek: Value(psalterWeek),
+                liturgicalYear: Value(liturgicalYear),
+                date: eventDate ?? today,
               ),
             );
 
@@ -174,6 +206,11 @@ class ReadingNotifier extends ChangeNotifier {
           title: title,
           liturgicalColorName: color,
           readingsJson: readingsJsonString,
+          grade: grade,
+          season: season,
+          psalterWeek: psalterWeek,
+          liturgicalYear: liturgicalYear,
+          date: eventDate ?? today,
         );
       }
     } catch (e) {

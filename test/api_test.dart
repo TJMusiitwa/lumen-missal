@@ -16,11 +16,12 @@ void main() {
 
       when(
         client.get(
-          Uri.parse('https://litcal.johnromanodorazio.com/api/v5/calendar'),
+          Uri.parse('https://litcal.johnromanodorazio.com/api/v5/calendar')
+              .replace(queryParameters: {}),
         ),
       ).thenAnswer(
         (_) async => http.Response(
-          '{"LitCal": {"2024-01-01": [{"name": "Mary, Mother of God", "color": "white"}]}}',
+          '{"LitCal": {"2024-01-01": [{"name": "Mary, Mother of God", "color": "white", "date": "2024-01-01"}]}}',
           200,
         ),
       );
@@ -38,7 +39,8 @@ void main() {
 
       when(
         client.get(
-          Uri.parse('https://litcal.johnromanodorazio.com/api/v5/calendar'),
+          Uri.parse('https://litcal.johnromanodorazio.com/api/v5/calendar')
+              .replace(queryParameters: {}),
         ),
       ).thenAnswer((_) async => http.Response('Not Found', 404));
 

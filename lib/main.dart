@@ -1,14 +1,13 @@
-import 'dart:convert';
-
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lumen_missal/ui/reading_screen.dart';
 
 import 'database/database.dart';
 import 'settings/settings_notifier.dart';
 import 'settings/settings_service.dart';
+import 'state/calendar_notifier.dart';
 import 'state/reading_notifier.dart';
 import 'theme/color_mapper.dart';
-import 'ui/settings_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,8 +16,9 @@ void main() async {
   final settingsService = SettingsService();
   final settingsNotifier = SettingsNotifier(settingsService: settingsService);
 
-  // Load settings before running app
   await settingsNotifier.loadSettings();
+
+  final calendarNotifier = CalendarNotifier();
 
   final readingNotifier = ReadingNotifier(
     database: database,
@@ -26,18 +26,24 @@ void main() async {
   );
 
   runApp(
-    MyApp(readingNotifier: readingNotifier, settingsNotifier: settingsNotifier),
+    MyApp(
+      readingNotifier: readingNotifier,
+      settingsNotifier: settingsNotifier,
+      calendarNotifier: calendarNotifier,
+    ),
   );
 }
 
 class MyApp extends StatelessWidget {
   final ReadingNotifier readingNotifier;
   final SettingsNotifier settingsNotifier;
+  final CalendarNotifier calendarNotifier;
 
   const MyApp({
     super.key,
     required this.readingNotifier,
     required this.settingsNotifier,
+    required this.calendarNotifier,
   });
 
   @override
@@ -97,129 +103,10 @@ class MyApp extends StatelessWidget {
           home: ReadingScreen(
             notifier: readingNotifier,
             settingsNotifier: settingsNotifier,
+            calendarNotifier: calendarNotifier,
           ),
         );
       },
-    );
-  }
-}
-
-class ReadingScreen extends StatefulWidget {
-  final ReadingNotifier notifier;
-  final SettingsNotifier settingsNotifier;
-
-  const ReadingScreen({
-    super.key,
-    required this.notifier,
-    required this.settingsNotifier,
-  });
-
-  @override
-  State<ReadingScreen> createState() => _ReadingScreenState();
-}
-
-class _ReadingScreenState extends State<ReadingScreen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.notifier.loadTodayReading();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Daily Readings'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      SettingsScreen(settingsNotifier: widget.settingsNotifier),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-      body: ListenableBuilder(
-        listenable: widget.notifier,
-        builder: (context, child) {
-          if (widget.notifier.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (widget.notifier.error != null) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Error loading readings:\n${widget.notifier.error}',
-                  style: const TextStyle(color: Colors.red),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            );
-          }
-
-          final data = widget.notifier.data;
-          if (data == null) {
-            return const Center(child: Text('No readings available.'));
-          }
-
-          Map<String, dynamic> readings = {};
-          try {
-            readings = json.decode(data.readingsJson) as Map<String, dynamic>;
-          } catch (e) {
-            readings = {'Error': 'Failed to parse readings json'};
-          }
-
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  data.title,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Liturgical Color: ${data.liturgicalColorName.toUpperCase()}',
-                  style: Theme.of(context).textTheme.labelLarge,
-                ),
-                const SizedBox(height: 24),
-                ...readings.entries.map((entry) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 24.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          entry.key,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          entry.value.toString(),
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-              ],
-            ),
-          );
-        },
-      ),
     );
   }
 }
