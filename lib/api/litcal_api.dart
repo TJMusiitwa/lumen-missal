@@ -20,7 +20,7 @@ class LitCalApi {
   }) async {
     final parameters = {
       if (year != null) 'year_type': 'CIVIL',
-      if (locale != null) 'locale': locale,
+      'locale': ?locale,
     };
     final uri = Uri(
       scheme: 'https',

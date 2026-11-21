@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:drift/drift.dart' show Value;
+import 'package:drift/drift.dart' show ComparableExpr, Value;
 import 'package:flutter/foundation.dart';
 
 import '../api/bible_api.dart';
@@ -29,18 +29,18 @@ class const ReadingPassage(
   };
 }
 
-class ReadingData {
-  ReadingData({
-    required this.dateKey,
-    required this.title,
-    required this.liturgicalColorName,
-    required Iterable<ReadingPassage> passages,
-    this.grade,
-    this.season,
-    this.psalterWeek,
-    this.liturgicalYear,
-    required this.date,
-  }) : passages = List.unmodifiable(passages);
+class ReadingData({
+  required final String dateKey,
+  required final String title,
+  required final String liturgicalColorName,
+  required Iterable<ReadingPassage> passages,
+  final String? grade,
+  final String? season,
+  final int? psalterWeek,
+  final String? liturgicalYear,
+  required final DateTime date,
+}) {
+  final List<ReadingPassage> passages = List.unmodifiable(passages);
 
   factory ReadingData.fromCache(CachedReading row) => ReadingData(
     dateKey: row.dateKey,
@@ -55,16 +55,6 @@ class ReadingData {
     liturgicalYear: row.liturgicalYear,
     date: row.date,
   );
-
-  final String dateKey;
-  final String title;
-  final String liturgicalColorName;
-  final List<ReadingPassage> passages;
-  final String? grade;
-  final String? season;
-  final int? psalterWeek;
-  final String? liturgicalYear;
-  final DateTime date;
 
   bool get hasAllPassages =>
       passages.isNotEmpty && passages.every((passage) => passage.text != null);
@@ -204,7 +194,10 @@ class ReadingNotifier extends ChangeNotifier {
         passages: passages,
         grade: event.gradeLcl,
         season: event.liturgicalSeasonLcl,
-        psalterWeek: event.psalterWeek,
+        psalterWeek: switch (event.psalterWeek) {
+          final int week when week > 0 => week,
+          _ => null,
+        },
         liturgicalYear: event.liturgicalYear,
         date: DateTime.utc(today.year, today.month, today.day),
       );
@@ -239,7 +232,7 @@ class ReadingNotifier extends ChangeNotifier {
         type: preferences.type,
         id: preferences.id,
         year: year,
-        locale: 'en_US',
+        locale: preferences.type == 'general' ? 'en_US' : null,
       ),
     );
     try {
@@ -261,9 +254,11 @@ class ReadingNotifier extends ChangeNotifier {
 
   Future<ReadingData?> _readCache(String key) async {
     try {
-      final row = await (database.select(
-        database.cachedReadings,
-      )..where((table) => table.dateKey.equals(key))).getSingleOrNull();
+      final row =
+          await (database.select(database.cachedReadings)
+                ..where((table) => table.dateKey.equals(key)))
+              .getSingleOrNull()
+              .timeout(const Duration(seconds: 2));
       return row == null ? null : ReadingData.fromCache(row);
     } catch (error) {
       debugPrint('Could not read the daily reading cache: $error');
@@ -289,7 +284,14 @@ class ReadingNotifier extends ChangeNotifier {
               liturgicalYear: Value(reading.liturgicalYear),
               date: reading.date,
             ),
-          );
+          )
+          .timeout(const Duration(seconds: 2));
+      final expiry = reading.date.subtract(const Duration(days: 90));
+      await (database.delete(database.cachedReadings)..where(
+            (table) => table.dateKey.isSmallerThanValue(litCalDateKey(expiry)),
+          ))
+          .go()
+          .timeout(const Duration(seconds: 2));
     } catch (error) {
       debugPrint('Could not write the daily reading cache: $error');
     }
