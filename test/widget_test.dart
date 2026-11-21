@@ -17,6 +17,7 @@ void main() {
     final mockNotifier = MockReadingNotifier();
     final mockSettingsNotifier = MockSettingsNotifier();
 
+    _stubDates(mockNotifier);
     when(mockNotifier.isLoading).thenReturn(true);
     when(mockNotifier.error).thenReturn(null);
     when(mockNotifier.data).thenReturn(null);
@@ -45,13 +46,14 @@ void main() {
 
     final notifier = MockReadingNotifier();
     final settings = MockSettingsNotifier();
+    _stubDates(notifier);
     when(notifier.isLoading).thenReturn(false);
     when(notifier.error).thenReturn(null);
     when(notifier.data).thenReturn(
       ReadingData(
         dateKey: '2026-01-02',
         title: 'A liturgical celebration',
-        liturgicalColorName: 'white',
+        liturgicalColors: const ['white'],
         passages: const [ReadingPassage('Gospel', 'John 3:16', 'Passage text')],
         date: DateTime.utc(2026, 1, 2),
       ),
@@ -67,6 +69,10 @@ void main() {
         calendarNotifier: CalendarNotifier(),
       ),
     );
+    await tester.tap(find.byTooltip('Next day'));
+    verify(notifier.selectDate(DateTime.utc(2026, 1, 3))).called(1);
+    await tester.tap(find.byTooltip('Previous day'));
+    verify(notifier.selectDate(DateTime.utc(2026, 1, 1))).called(1);
     await tester.tap(find.text('John 3:16'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 40));
@@ -86,4 +92,11 @@ void main() {
     expect(row.focusNode?.hasFocus, isTrue);
     expect(tester.takeException(), isNull);
   });
+}
+
+void _stubDates(MockReadingNotifier notifier) {
+  when(notifier.today).thenReturn(DateTime.utc(2026, 1, 2));
+  when(notifier.selectedDate).thenReturn(DateTime.utc(2026, 1, 2));
+  when(notifier.firstDate).thenReturn(DateTime.utc(2025, 12, 26));
+  when(notifier.lastDate).thenReturn(DateTime.utc(2026, 1, 9));
 }

@@ -85,7 +85,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
     });
   }
 
-  void _refresh() => widget.notifier.loadTodayReading(forceRefresh: true);
+  void _refresh() => widget.notifier.loadSelectedReading(forceRefresh: true);
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
@@ -99,6 +99,10 @@ class _ReadingScreenState extends State<ReadingScreen> {
       final reduceMotion = MediaQuery.disableAnimationsOf(context);
       final surface = Theme.of(context).colorScheme.surface;
       final data = notifier.data;
+      final palette = LiturgicalPalette.forDay(
+        Theme.of(context).colorScheme,
+        data?.liturgicalColors ?? const [],
+      );
       final selected = data?.dateKey == _selectedDay
           ? data?.passages
                 .where((passage) => passage.label == _selectedLabel)
@@ -178,7 +182,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
                   );
                 },
                 child: selected == null
-                    ? _buildIndex(context, data)
+                    ? _buildIndex(context, data, palette)
                     : CallbackShortcuts(
                         key: ValueKey((data!.dateKey, selected.label)),
                         bindings: {
@@ -187,6 +191,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
                         },
                         child: _PassageReader(
                           passage: selected,
+                          accent: palette.accent,
                           backFocus: _readerBackFocus,
                           onBack: _closePassage,
                           onRetry: notifier.isLoading ? null : _refresh,
@@ -212,24 +217,47 @@ class _ReadingScreenState extends State<ReadingScreen> {
     },
   );
 
-  Widget _buildIndex(BuildContext context, ReadingData? data) {
+  Widget _buildIndex(
+    BuildContext context,
+    ReadingData? data,
+    LiturgicalPalette palette,
+  ) {
     final theme = Theme.of(context);
     final notifier = widget.notifier;
     return SingleChildScrollView(
       key: const ValueKey('reading-index'),
       controller: _readingScroll,
-      padding: const EdgeInsets.fromLTRB(popupPadding, 21, popupPadding, 18),
+      padding: const EdgeInsets.fromLTRB(popupPadding, 12, popupPadding, 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Semantics(
-            header: true,
-            child: Text('Daily Readings', style: theme.textTheme.headlineSmall),
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 48),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Semantics(
+                    header: true,
+                    child: Text(
+                      'Daily Readings',
+                      style: theme.textTheme.headlineSmall,
+                    ),
+                  ),
+                ),
+                if (notifier.selectedDate != notifier.today)
+                  TextButton(
+                    onPressed: notifier.loadTodayReading,
+                    child: const Text('Today'),
+                  ),
+              ],
+            ),
           ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 8),
+          _DateNavigator(notifier: notifier, accent: palette.accent),
+          const SizedBox(height: 9),
           if (data != null) ...[
-            _DayCard(data),
-            const SizedBox(height: 23),
+            _DayCard(data, palette),
+            const SizedBox(height: 16),
             if (notifier.error != null) ...[
               const _ReadingStatus(
                 icon: Icons.cloud_off_outlined,
@@ -261,6 +289,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
                 const Divider(height: 1),
                 _PassageRow(
                   passage: passage,
+                  accent: palette.accent,
                   focusNode: _passageFocus.putIfAbsent(
                     passage.label,
                     FocusNode.new,
@@ -273,7 +302,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
           ] else if (notifier.error != null)
             _ReadingStatus(
               icon: Icons.cloud_off_outlined,
-              heading: 'Couldn’t load today’s readings',
+              heading: 'Couldn’t load readings for this date',
               message: 'Check your connection and try again.',
               action: FilledButton.tonal(
                 onPressed: _refresh,
@@ -283,7 +312,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
           else
             const _ReadingStatus(
               icon: Icons.calendar_today_outlined,
-              heading: 'Loading today’s calendar',
+              heading: 'Loading the calendar',
               message: 'Looking up the celebration and its readings.',
             ),
         ],
@@ -323,153 +352,144 @@ class _Wordmark extends StatelessWidget {
   }
 }
 
-class const _DayCard(final ReadingData data) extends StatelessWidget {
-  static const _months = [
-    'JAN',
-    'FEB',
-    'MAR',
-    'APR',
-    'MAY',
-    'JUN',
-    'JUL',
-    'AUG',
-    'SEP',
-    'OCT',
-    'NOV',
-    'DEC',
-  ];
+class const _DateNavigator({
+  required final ReadingNotifier notifier,
+  required final Color accent,
+}) extends StatelessWidget {
+  static const _day = Duration(days: 1);
 
+  Future<void> _chooseDate(BuildContext context) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: notifier.selectedDate,
+      currentDate: notifier.today,
+      firstDate: notifier.firstDate,
+      lastDate: notifier.lastDate,
+      helpText: 'Choose a reading date',
+    );
+    if (context.mounted && picked != null) {
+      await notifier.selectDate(picked);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final date = notifier.selectedDate;
+    final labels = MaterialLocalizations.of(context);
+    final colors = Theme.of(context).colorScheme;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border.all(color: colors.outlineVariant),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            tooltip: 'Previous day',
+            onPressed: date.isAfter(notifier.firstDate)
+                ? () => notifier.selectDate(date.subtract(_day))
+                : null,
+            icon: const Icon(Icons.chevron_left_rounded, size: 20),
+          ),
+          Expanded(
+            child: Tooltip(
+              message: 'Choose a date. ${labels.formatFullDate(date)}',
+              child: TextButton.icon(
+                onPressed: () => _chooseDate(context),
+                style: TextButton.styleFrom(foregroundColor: accent),
+                icon: const Icon(Icons.calendar_today_outlined, size: 15),
+                label: Text(labels.formatMediumDate(date)),
+              ),
+            ),
+          ),
+          IconButton(
+            tooltip: 'Next day',
+            onPressed: date.isBefore(notifier.lastDate)
+                ? () => notifier.selectDate(date.add(_day))
+                : null,
+            icon: const Icon(Icons.chevron_right_rounded, size: 20),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class const _DayCard(final ReadingData data, final LiturgicalPalette palette)
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dark = theme.brightness == Brightness.dark;
-    final foreground = dark ? const Color(0xfff0e9fd) : const Color(0xff32274b);
-    final supporting = dark ? const Color(0xffcabedd) : const Color(0xff615477);
-    final date = data.date.toUtc();
-    final year = data.liturgicalYear?.trim();
     final metadata = [
       if (data.season case final season? when season.isNotEmpty) season,
       if (data.grade case final grade? when grade.isNotEmpty) grade,
-    ].join(' · ');
+      if (data.liturgicalYear case final year? when year.trim().isNotEmpty)
+        year,
+      if (data.psalterWeek case final week?) 'Psalter week $week',
+    ];
 
-    return DecoratedBox(
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: dark ? const Color(0xff292435) : const Color(0xfff0ebfa),
+        color: palette.surface,
         borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: palette.accent.withValues(alpha: 0.20)),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Semantics(
-              label: MaterialLocalizations.of(context).formatFullDate(date),
-              excludeSemantics: true,
-              child: Container(
-                width: 55,
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                decoration: BoxDecoration(
-                  color: dark
-                      ? const Color(0xff382f49)
-                      : const Color(0xffe5dbf4),
-                  borderRadius: BorderRadius.circular(9),
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      _months[date.month - 1],
-                      style: TextStyle(
-                        color: supporting,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.8,
-                      ),
-                    ),
-                    Text(
-                      '${date.day}',
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        color: foreground,
-                        fontFeatures: const [FontFeature.tabularFigures()],
-                      ),
-                    ),
-                  ],
-                ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Semantics(
+            header: true,
+            child: Text(data.title, style: theme.textTheme.titleLarge),
+          ),
+          if (metadata.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(
+              metadata.join(' · '),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colors.onSurfaceVariant,
               ),
             ),
-            const SizedBox(width: 13),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+          ],
+          if (palette.swatches.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 12,
+              runSpacing: 4,
+              children: [
+                for (final (:label, :color) in palette.swatches)
                   Semantics(
-                    header: true,
-                    child: Text(
-                      data.title,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: foreground,
-                      ),
-                    ),
-                  ),
-                  if (metadata.isNotEmpty ||
-                      data.liturgicalColorName.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Row(
+                    label: 'Liturgical colour: $label',
+                    excludeSemantics: true,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (data.liturgicalColorName.isNotEmpty) ...[
-                          Tooltip(
-                            message:
-                                'Liturgical color: ${data.liturgicalColorName}',
-                            child: Container(
-                              width: 9,
-                              height: 9,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: data.liturgicalColorName == 'white'
-                                    ? Colors.white
-                                    : mapLiturgicalColor(
-                                        data.liturgicalColorName,
-                                      ),
-                                border: Border.all(
-                                  color: colors.onSurface.withValues(
-                                    alpha: 0.28,
-                                  ),
-                                ),
-                              ),
-                            ),
+                        Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: color,
+                            border: Border.all(color: colors.outline),
                           ),
-                          const SizedBox(width: 6),
-                        ],
-                        Flexible(
-                          child: Text(
-                            metadata,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: supporting,
-                            ),
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          label,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: palette.accent,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ),
-                  ],
-                  if (data.liturgicalYear != null ||
-                      data.psalterWeek != null) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      [
-                        if (year != null && year.isNotEmpty) year,
-                        if (data.psalterWeek case final week?)
-                          'Psalter week $week',
-                      ].join(' · '),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: supporting,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
+                  ),
+              ],
             ),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -477,6 +497,7 @@ class const _DayCard(final ReadingData data) extends StatelessWidget {
 
 class const _PassageRow({
   required final ReadingPassage passage,
+  required final Color accent,
   required final ValueChanged<bool> onOpen,
   required final FocusNode focusNode,
 }) extends StatelessWidget {
@@ -489,9 +510,9 @@ class const _PassageRow({
       focusNode: focusNode,
       onTapUp: (_) => pointer = true,
       onTap: () => onOpen(pointer),
-      focusColor: colors.primary.withValues(alpha: 0.16),
+      focusColor: accent.withValues(alpha: 0.16),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 4),
         child: Row(
           children: [
             Expanded(
@@ -510,7 +531,7 @@ class const _PassageRow({
               ),
             ),
             const SizedBox(width: 10),
-            Icon(Icons.chevron_right_rounded, color: colors.primary, size: 20),
+            Icon(Icons.chevron_right_rounded, color: accent, size: 20),
           ],
         ),
       ),
@@ -520,6 +541,7 @@ class const _PassageRow({
 
 class const _PassageReader({
   required final ReadingPassage passage,
+  required final Color accent,
   required final VoidCallback onBack,
   required final FocusNode backFocus,
   required final VoidCallback? onRetry,
@@ -527,7 +549,6 @@ class const _PassageReader({
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = theme.colorScheme;
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(popupPadding, 12, popupPadding, 24),
       child: Column(
@@ -547,7 +568,7 @@ class const _PassageReader({
           const SizedBox(height: 5),
           Text(
             passage.reference,
-            style: theme.textTheme.titleMedium?.copyWith(color: colors.primary),
+            style: theme.textTheme.titleMedium?.copyWith(color: accent),
           ),
           const SizedBox(height: 16),
           const Divider(height: 1),

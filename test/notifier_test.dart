@@ -62,7 +62,7 @@ void main() {
               {
                 "name": "Test Day",
                 "date": today.toIso8601String(),
-                "color": ["green"],
+                "color": ["green", "white"],
                 "readings": {"gospel": "John 3:16"},
               },
             ],
@@ -89,7 +89,7 @@ void main() {
       expect(notifier.isLoading, isFalse);
       expect(notifier.data, isNotNull);
       expect(notifier.data!.title, 'Test Day');
-      expect(notifier.data!.liturgicalColorName, 'green');
+      expect(notifier.data!.liturgicalColors, ['green', 'white']);
       expect(notifier.error, isNull);
     },
   );
@@ -150,6 +150,71 @@ void main() {
       expect(notifier.data?.passages.single.text, 'Saved text');
       verify(mockBibleApi.fetchPassage('John 3:16', translation: 'web'))
           .called(1);
+    },
+  );
+  test(
+    'uses the selected civil year and limits browsing to seven days',
+    () async {
+      when(
+        mockLitCalApi.fetchTodayData(
+          type: 'general',
+          id: '',
+          year: 2025,
+          locale: 'en_US',
+        ),
+      ).thenAnswer(
+        (_) async => LitCalResponse.fromJson({
+          'litcal': [
+            {'date': '2025-12-26', 'name': 'Earliest day'},
+            {'date': '2025-12-31', 'name': 'Last day of the year'},
+          ],
+        }),
+      );
+      when(
+        mockLitCalApi.fetchTodayData(
+          type: 'general',
+          id: '',
+          year: 2026,
+          locale: 'en_US',
+        ),
+      ).thenAnswer(
+        (_) async => LitCalResponse.fromJson({
+          'litcal': [
+            {'date': '2026-01-02', 'name': 'Today'},
+            {'date': '2026-01-09', 'name': 'Latest day'},
+          ],
+        }),
+      );
+
+      await notifier.selectDate(DateTime(2025, 12, 31, 22));
+      expect(notifier.data?.title, 'Last day of the year');
+      await notifier.selectDate(DateTime(2025, 12, 26));
+      expect(notifier.data?.title, 'Earliest day');
+      await notifier.selectDate(DateTime(2025, 12, 25));
+      expect(notifier.selectedDate, DateTime.utc(2025, 12, 26));
+      await notifier.selectDate(DateTime(2026, 1, 9));
+      expect(notifier.data?.title, 'Latest day');
+      await notifier.selectDate(DateTime(2026, 1, 10));
+      expect(notifier.selectedDate, DateTime.utc(2026, 1, 9));
+
+      await notifier.loadTodayReading();
+      expect(notifier.data?.title, 'Today');
+      verify(
+        mockLitCalApi.fetchTodayData(
+          type: 'general',
+          id: '',
+          year: 2025,
+          locale: 'en_US',
+        ),
+      ).called(1);
+      verify(
+        mockLitCalApi.fetchTodayData(
+          type: 'general',
+          id: '',
+          year: 2026,
+          locale: 'en_US',
+        ),
+      ).called(1);
     },
   );
 }

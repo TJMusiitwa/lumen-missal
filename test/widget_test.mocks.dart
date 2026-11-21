@@ -10,13 +10,13 @@ import 'dart:ui' as _i13;
 import 'package:drift/backends.dart' as _i4;
 import 'package:drift/drift.dart' as _i2;
 import 'package:drift/src/runtime/executor/stream_queries.dart' as _i5;
+import 'package:flutter/material.dart' as _i14;
 import 'package:lumen_missal/api/bible_api.dart' as _i8;
 import 'package:lumen_missal/api/litcal_api.dart' as _i7;
 import 'package:lumen_missal/database/database.dart' as _i3;
 import 'package:lumen_missal/settings/settings_notifier.dart' as _i9;
 import 'package:lumen_missal/settings/settings_service.dart' as _i10;
 import 'package:lumen_missal/state/reading_notifier.dart' as _i12;
-import 'package:flutter/material.dart' as _i14;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i11;
 
@@ -175,14 +175,19 @@ class _FakeSettingsNotifier_23 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
-class _FakeSettingsService_24 extends _i1.SmartFake
-    implements _i10.SettingsService {
-  _FakeSettingsService_24(Object parent, Invocation parentInvocation)
+class _FakeDateTime_24 extends _i1.SmartFake implements DateTime {
+  _FakeDateTime_24(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeSettings_25 extends _i1.SmartFake implements _i10.Settings {
-  _FakeSettings_25(Object parent, Invocation parentInvocation)
+class _FakeSettingsService_25 extends _i1.SmartFake
+    implements _i10.SettingsService {
+  _FakeSettingsService_25(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeSettings_26 extends _i1.SmartFake implements _i10.Settings {
+  _FakeSettings_26(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
@@ -761,6 +766,30 @@ class MockReadingNotifier extends _i1.Mock implements _i12.ReadingNotifier {
           as bool);
 
   @override
+  DateTime get today => (super.noSuchMethod(
+    Invocation.getter(#today),
+    returnValue: _FakeDateTime_24(this, Invocation.getter(#today)),
+  ) as DateTime);
+
+  @override
+  DateTime get firstDate => (super.noSuchMethod(
+    Invocation.getter(#firstDate),
+    returnValue: _FakeDateTime_24(this, Invocation.getter(#firstDate)),
+  ) as DateTime);
+
+  @override
+  DateTime get lastDate => (super.noSuchMethod(
+    Invocation.getter(#lastDate),
+    returnValue: _FakeDateTime_24(this, Invocation.getter(#lastDate)),
+  ) as DateTime);
+
+  @override
+  DateTime get selectedDate => (super.noSuchMethod(
+    Invocation.getter(#selectedDate),
+    returnValue: _FakeDateTime_24(this, Invocation.getter(#selectedDate)),
+  ) as DateTime);
+
+  @override
   bool get hasListeners =>
       (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
           as bool);
@@ -775,6 +804,23 @@ class MockReadingNotifier extends _i1.Mock implements _i12.ReadingNotifier {
   _i6.Future<void> loadTodayReading({bool? forceRefresh = false}) =>
       (super.noSuchMethod(
         Invocation.method(#loadTodayReading, [], {#forceRefresh: forceRefresh}),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> selectDate(DateTime? date) => (super.noSuchMethod(
+    Invocation.method(#selectDate, [date]),
+    returnValue: _i6.Future<void>.value(),
+    returnValueForMissingStub: _i6.Future<void>.value(),
+  ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> loadSelectedReading({bool? forceRefresh = false}) =>
+      (super.noSuchMethod(
+        Invocation.method(#loadSelectedReading, [], {
+          #forceRefresh: forceRefresh,
+        }),
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
@@ -809,7 +855,7 @@ class MockSettingsNotifier extends _i1.Mock implements _i9.SettingsNotifier {
   @override
   _i10.SettingsService get settingsService => (super.noSuchMethod(
     Invocation.getter(#settingsService),
-    returnValue: _FakeSettingsService_24(
+    returnValue: _FakeSettingsService_25(
       this,
       Invocation.getter(#settingsService),
     ),
@@ -818,7 +864,7 @@ class MockSettingsNotifier extends _i1.Mock implements _i9.SettingsNotifier {
   @override
   _i10.Settings get settings => (super.noSuchMethod(
     Invocation.getter(#settings),
-    returnValue: _FakeSettings_25(this, Invocation.getter(#settings)),
+    returnValue: _FakeSettings_26(this, Invocation.getter(#settings)),
   ) as _i10.Settings);
 
   @override

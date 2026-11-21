@@ -340,118 +340,6 @@
           "oklch(95% 0.0107 298.0)"
         ]
       },
-      "celebration": {
-        "role": "primary",
-        "displayName": "Celebration surface",
-        "tonalRamp": [
-          "oklch(15% 0.0079 301.1)",
-          "oklch(25% 0.0120 301.1)",
-          "oklch(38% 0.0169 301.1)",
-          "oklch(50% 0.0207 301.1)",
-          "oklch(62% 0.0207 301.1)",
-          "oklch(75% 0.0176 301.1)",
-          "oklch(86% 0.0124 301.1)",
-          "oklch(95% 0.0062 301.1)"
-        ]
-      },
-      "celebration-dark": {
-        "role": "primary",
-        "displayName": "Celebration surface in dark mode",
-        "tonalRamp": [
-          "oklch(15% 0.0120 297.8)",
-          "oklch(25% 0.0184 297.8)",
-          "oklch(38% 0.0260 297.8)",
-          "oklch(50% 0.0317 297.8)",
-          "oklch(62% 0.0317 297.8)",
-          "oklch(75% 0.0269 297.8)",
-          "oklch(86% 0.0190 297.8)",
-          "oklch(95% 0.0095 297.8)"
-        ]
-      },
-      "celebration-ink": {
-        "role": "primary",
-        "displayName": "Celebration title",
-        "tonalRamp": [
-          "oklch(15% 0.0244 296.4)",
-          "oklch(25% 0.0373 296.4)",
-          "oklch(38% 0.0528 296.4)",
-          "oklch(50% 0.0643 296.4)",
-          "oklch(62% 0.0643 296.4)",
-          "oklch(75% 0.0547 296.4)",
-          "oklch(86% 0.0386 296.4)",
-          "oklch(95% 0.0193 296.4)"
-        ]
-      },
-      "celebration-ink-dark": {
-        "role": "primary",
-        "displayName": "Celebration title in dark mode",
-        "tonalRamp": [
-          "oklch(15% 0.0105 301.8)",
-          "oklch(25% 0.0160 301.8)",
-          "oklch(38% 0.0227 301.8)",
-          "oklch(50% 0.0277 301.8)",
-          "oklch(62% 0.0277 301.8)",
-          "oklch(75% 0.0235 301.8)",
-          "oklch(86% 0.0166 301.8)",
-          "oklch(95% 0.0083 301.8)"
-        ]
-      },
-      "celebration-muted": {
-        "role": "primary",
-        "displayName": "Celebration metadata",
-        "tonalRamp": [
-          "oklch(15% 0.0219 301.3)",
-          "oklch(25% 0.0334 301.3)",
-          "oklch(38% 0.0472 301.3)",
-          "oklch(50% 0.0576 301.3)",
-          "oklch(62% 0.0576 301.3)",
-          "oklch(75% 0.0489 301.3)",
-          "oklch(86% 0.0345 301.3)",
-          "oklch(95% 0.0173 301.3)"
-        ]
-      },
-      "celebration-muted-dark": {
-        "role": "primary",
-        "displayName": "Celebration metadata in dark mode",
-        "tonalRamp": [
-          "oklch(15% 0.0170 303.0)",
-          "oklch(25% 0.0260 303.0)",
-          "oklch(38% 0.0367 303.0)",
-          "oklch(50% 0.0448 303.0)",
-          "oklch(62% 0.0448 303.0)",
-          "oklch(75% 0.0381 303.0)",
-          "oklch(86% 0.0269 303.0)",
-          "oklch(95% 0.0134 303.0)"
-        ]
-      },
-      "date-tile": {
-        "role": "primary",
-        "displayName": "Calendar tile",
-        "tonalRamp": [
-          "oklch(15% 0.0134 303.8)",
-          "oklch(25% 0.0205 303.8)",
-          "oklch(38% 0.0290 303.8)",
-          "oklch(50% 0.0353 303.8)",
-          "oklch(62% 0.0353 303.8)",
-          "oklch(75% 0.0300 303.8)",
-          "oklch(86% 0.0212 303.8)",
-          "oklch(95% 0.0106 303.8)"
-        ]
-      },
-      "date-tile-dark": {
-        "role": "primary",
-        "displayName": "Calendar tile in dark mode",
-        "tonalRamp": [
-          "oklch(15% 0.0177 299.7)",
-          "oklch(25% 0.0270 299.7)",
-          "oklch(38% 0.0382 299.7)",
-          "oklch(50% 0.0465 299.7)",
-          "oklch(62% 0.0465 299.7)",
-          "oklch(75% 0.0396 299.7)",
-          "oklch(86% 0.0279 299.7)",
-          "oklch(95% 0.0140 299.7)"
-        ]
-      },
       "liturgical-green": {
         "role": "secondary",
         "displayName": "Liturgical green",
@@ -535,20 +423,6 @@
           "oklch(86% 0.0441 7.1)",
           "oklch(95% 0.0221 7.1)"
         ]
-      },
-      "liturgical-fallback": {
-        "role": "secondary",
-        "displayName": "Liturgical fallback",
-        "tonalRamp": [
-          "oklch(15% 0.0560 248.0)",
-          "oklch(25% 0.0855 248.0)",
-          "oklch(38% 0.1209 248.0)",
-          "oklch(50% 0.1475 248.0)",
-          "oklch(62% 0.1475 248.0)",
-          "oklch(75% 0.1253 248.0)",
-          "oklch(86% 0.0885 248.0)",
-          "oklch(95% 0.0442 248.0)"
-        ]
       }
     },
     "typographyMeta": {
@@ -575,10 +449,6 @@
       "metadata": {
         "displayName": "Metadata",
         "purpose": "Citations, calendar details, and translation metadata."
-      },
-      "month": {
-        "displayName": "Month",
-        "purpose": "Uppercase label in the calendar tile."
       }
     },
     "shadows": [
@@ -662,9 +532,9 @@
       "name": "Celebration card",
       "kind": "card",
       "refersTo": "celebration-card",
-      "description": "Pairs the calendar tile and liturgical indicator with the celebration name.",
-      "html": "<article class=\"ds-celebration\"><div class=\"ds-date\" aria-label=\"November 22\"><span>NOV</span><strong>22</strong></div><div class=\"ds-celebration-copy\"><h3>Our Lord Jesus Christ, King of the Universe</h3><p><i role=\"img\" aria-label=\"Liturgical color: white\" title=\"Liturgical color: white\"></i>Solemnity</p></div></article>",
-      "css": ".ds-celebration { display: flex; max-width: 376px; align-items: flex-start; gap: 13px; padding: 16px; border-radius: 14px; background: #f0ebfa; color: #32274b; font-family: Inter, system-ui, sans-serif; } .ds-date { flex: 0 0 55px; display: grid; justify-items: center; padding: 8px 0; background: #e5dbf4; border-radius: 9px; } .ds-date span { color: #615477; font-size: 10px; font-weight: 700; letter-spacing: .8px; } .ds-date strong { font: 600 25px/1.18 Inter, system-ui, sans-serif; letter-spacing: -.7px; font-variant-numeric: tabular-nums; } .ds-celebration-copy h3 { margin: 0; font: 600 19px/1.27 Inter, system-ui, sans-serif; letter-spacing: -.4px; } .ds-celebration-copy p { display: flex; gap: 6px; align-items: center; margin: 8px 0 0; color: #615477; font-size: 12px; line-height: 1.45; } .ds-celebration-copy i { display: inline-block; width: 7px; height: 7px; border: 1px solid rgb(35 33 42 / 28%); border-radius: 50%; background: #fff; }"
+      "description": "Shows the celebration and its labelled LitCal colours. This example uses red.",
+      "html": "<article class=\"ds-celebration\"><h3>Saint Andrew Dũng-Lạc, Priest, and Companions, Martyrs</h3><p>Ordinary Time · Memorial</p><p class=\"ds-swatch\"><i aria-hidden=\"true\"></i>Red</p></article>",
+      "css": ".ds-celebration { max-width: 376px; box-sizing: border-box; padding: 14px; border: 1px solid rgb(68 22 29 / 20%); border-radius: 14px; background: #f3e5e7; color: #23212a; font-family: Inter, system-ui, sans-serif; } .ds-celebration h3 { margin: 0; font-size: 19px; font-weight: 600; line-height: 1.27; letter-spacing: -.4px; } .ds-celebration p { margin: 4px 0 0; color: #5f586b; font-size: 12px; line-height: 1.45; } .ds-celebration .ds-swatch { display: flex; gap: 5px; align-items: center; margin-top: 8px; color: #44161d; font-weight: 600; } .ds-swatch i { width: 10px; height: 10px; box-sizing: border-box; border: 1px solid #79757f; border-radius: 50%; background: #8b0000; }"
     },
     {
       "name": "Reading row",
@@ -672,7 +542,7 @@
       "refersTo": "reading-row",
       "description": "Opens the cited passage from the daily index.",
       "html": "<button type=\"button\" class=\"ds-row\"><span><strong>Gospel</strong><small>Matthew 25:31–46</small></span><svg aria-hidden=\"true\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6Z\"/></svg></button>",
-      "css": ".ds-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: min(100%, 376px); text-align: start; padding: 10px 4px; color: #23212a; background: transparent; border: 0; font-family: Inter, system-ui, sans-serif; cursor: pointer; } .ds-row strong { display: block; font-size: 14px; line-height: 1.35; font-weight: 600; } .ds-row small { display: block; margin-top: 2px; color: #5f586b; font-size: 12px; line-height: 1.45; } .ds-row svg { color: #544387; flex: none; } .ds-row:hover { background: color-mix(in srgb, #544387 8%, transparent); } .ds-row:focus-visible { background: rgb(84 67 135 / 16%); outline: 2px solid #544387; outline-offset: -2px; }"
+      "css": ".ds-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: min(100%, 376px); text-align: start; padding: 7px 4px; color: #23212a; background: transparent; border: 0; font-family: Inter, system-ui, sans-serif; cursor: pointer; } .ds-row strong { display: block; font-size: 14px; line-height: 1.35; font-weight: 600; } .ds-row small { display: block; margin-top: 2px; color: #5f586b; font-size: 12px; line-height: 1.45; } .ds-row svg { color: #544387; flex: none; } .ds-row:hover { background: color-mix(in srgb, #544387 8%, transparent); } .ds-row:focus-visible { background: rgb(84 67 135 / 16%); outline: 2px solid #544387; outline-offset: -2px; }"
     },
     {
       "name": "Reading status panel",
@@ -685,17 +555,17 @@
   ],
   "narrative": {
     "northStar": "Modern utility",
-    "overview": "Neutral chrome keeps daily lookup quick and gives the reading space to breathe. The date tile and celebration are the strongest visual cues in the index. In the reader, the passage label and citation carry that hierarchy into a simple text column.",
+    "overview": "Neutral chrome keeps daily lookup quick and gives the reading space to breathe. The date navigator and celebration are the strongest visual cues in the index. In the reader, the passage label and citation carry that hierarchy into a simple text column.",
     "keyCharacteristics": [
       "Single-column layout with persistent context.",
       "Inter headings and comfortably spaced scripture.",
-      "A restrained violet accent and a small liturgical color marker."
+      "A liturgical accent that follows the selected celebration."
     ],
     "rules": [],
     "dos": [
       "Do use the same content gutter for the index, reader, settings, and source footer.",
       "Do keep citations visible when passage text is unavailable.",
-      "Do keep liturgical color in the indicator and its label."
+      "Do use the same liturgical accent across the celebration, date navigator, and reader."
     ],
     "donts": []
   }

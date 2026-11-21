@@ -12,7 +12,7 @@ Lumen Missal is a browser extension for looking up and reading the Catholic litu
 
 ## Operating context
 
-The main surface is a compact extension popup. Readers can also open the Flutter web app in a browser tab. Settings control appearance, Bible translation, and general, national, or diocesan calendar.
+The main surface is a compact extension popup. Readers can browse up to seven days before or after today. Readers can also open the Flutter web app in a browser tab. Settings control appearance, Bible translation, and general, national, or diocesan calendar.
 
 ## Capabilities and constraints
 

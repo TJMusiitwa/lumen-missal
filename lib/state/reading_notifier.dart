@@ -32,7 +32,7 @@ class const ReadingPassage(
 class ReadingData({
   required final String dateKey,
   required final String title,
-  required final String liturgicalColorName,
+  required Iterable<String> liturgicalColors,
   required Iterable<ReadingPassage> passages,
   final String? grade,
   final String? season,
@@ -41,11 +41,14 @@ class ReadingData({
   required final DateTime date,
 }) {
   final List<ReadingPassage> passages = List.unmodifiable(passages);
+  final List<String> liturgicalColors = List.unmodifiable(liturgicalColors);
 
   factory ReadingData.fromCache(CachedReading row) => ReadingData(
     dateKey: row.dateKey,
     title: row.title,
-    liturgicalColorName: row.liturgicalColorName,
+    liturgicalColors: row.liturgicalColorName
+        .split(',')
+        .where((color) => color.isNotEmpty),
     passages: (jsonDecode(row.readingsJson) as List).map(
       (value) => ReadingPassage.fromJson(value as Map<String, dynamic>),
     ),
@@ -76,6 +79,15 @@ class ReadingNotifier extends ChangeNotifier {
   String? _error;
   String? get error => _error;
 
+  static const _navigationWindow = Duration(days: 7);
+  DateTime? _selectedDate;
+
+  // Keep civil dates at UTC midnight so stepping a day is independent of DST.
+  DateTime get today => _civilDate(_now());
+  DateTime get firstDate => today.subtract(_navigationWindow);
+  DateTime get lastDate => today.add(_navigationWindow);
+  DateTime get selectedDate => _selectedDate ?? today;
+
   late _ReadingPreferences _preferences;
   int _request = 0;
   String? _loadingKey;
@@ -105,7 +117,7 @@ class ReadingNotifier extends ChangeNotifier {
     final preferences = _readPreferences();
     if (preferences == _preferences) return;
     _preferences = preferences;
-    loadTodayReading();
+    loadSelectedReading();
   }
 
   @override
@@ -116,12 +128,29 @@ class ReadingNotifier extends ChangeNotifier {
   }
 
   Future<void> loadTodayReading({bool forceRefresh = false}) {
-    final today = _now();
+    _selectedDate = null;
+    return loadSelectedReading(forceRefresh: forceRefresh);
+  }
+
+  Future<void> selectDate(DateTime date) {
+    final day = _civilDate(date);
+    if (day.isBefore(firstDate) || day.isAfter(lastDate)) {
+      return Future<void>.value();
+    }
+    _selectedDate = day == today ? null : day;
+    return loadSelectedReading();
+  }
+
+  static DateTime _civilDate(DateTime time) =>
+      DateTime.utc(time.year, time.month, time.day);
+
+  Future<void> loadSelectedReading({bool forceRefresh = false}) {
+    final date = selectedDate;
     final preferences = _preferences;
     // Older cache entries have no reading labels and may contain fallback
     // verses or error text. Fetch a verified copy before showing them.
     final key =
-        '${litCalDateKey(today)}_v2_${preferences.type}_'
+        '${litCalDateKey(date)}_v2_${preferences.type}_'
         '${preferences.id}_${preferences.translation}';
     if (key == _loadingKey) return _loading ?? Future<void>.value();
 
@@ -130,14 +159,14 @@ class ReadingNotifier extends ChangeNotifier {
     _isLoading = true;
     _error = null;
     if (_data?.dateKey != key) _data = null;
-    _loading = _load(request, today, key, preferences, forceRefresh);
+    _loading = _load(request, date, key, preferences, forceRefresh);
     notifyListeners();
     return _loading!;
   }
 
   Future<void> _load(
     int request,
-    DateTime today,
+    DateTime date,
     String key,
     _ReadingPreferences preferences,
     bool forceRefresh,
@@ -151,9 +180,9 @@ class ReadingNotifier extends ChangeNotifier {
         notifyListeners();
       }
 
-      final calendar = await _calendar(today.year, preferences, forceRefresh);
+      final calendar = await _calendar(date.year, preferences, forceRefresh);
       if (request != _request) return;
-      final event = calendar.daytimeEvent(today);
+      final event = calendar.daytimeEvent(date);
       if (event == null) {
         throw const FormatException(
           'LitCal has no daytime event for this date',
@@ -190,7 +219,7 @@ class ReadingNotifier extends ChangeNotifier {
       final reading = ReadingData(
         dateKey: key,
         title: event.name,
-        liturgicalColorName: event.color.firstOrNull ?? '',
+        liturgicalColors: event.color,
         passages: passages,
         grade: event.gradeLcl,
         season: event.liturgicalSeasonLcl,
@@ -199,7 +228,7 @@ class ReadingNotifier extends ChangeNotifier {
           _ => null,
         },
         liturgicalYear: event.liturgicalYear,
-        date: DateTime.utc(today.year, today.month, today.day),
+        date: date,
       );
 
       _data = reading;
@@ -274,7 +303,8 @@ class ReadingNotifier extends ChangeNotifier {
             CachedReadingsCompanion.insert(
               dateKey: reading.dateKey,
               title: reading.title,
-              liturgicalColorName: reading.liturgicalColorName,
+              // Older rows store one name, which also works as a one-item list.
+              liturgicalColorName: reading.liturgicalColors.join(','),
               readingsJson: jsonEncode(
                 reading.passages.map((p) => p.toJson()).toList(),
               ),
@@ -286,7 +316,7 @@ class ReadingNotifier extends ChangeNotifier {
             ),
           )
           .timeout(const Duration(seconds: 2));
-      final expiry = reading.date.subtract(const Duration(days: 90));
+      final expiry = today.subtract(const Duration(days: 90));
       await (database.delete(database.cachedReadings)..where(
             (table) => table.dateKey.isSmallerThanValue(litCalDateKey(expiry)),
           ))
