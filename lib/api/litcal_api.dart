@@ -1,8 +1,13 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
+
 import 'litcal_models.dart';
 
 class LitCalApi {
+  static const _host = 'litcal.johnromanodorazio.com';
+  static const _timeout = Duration(seconds: 10);
+
   final http.Client client;
 
   LitCalApi({http.Client? client}) : client = client ?? http.Client();
@@ -13,54 +18,44 @@ class LitCalApi {
     int? year,
     String? locale,
   }) async {
-    String url = 'https://litcal.johnromanodorazio.com/api/v5/calendar';
-
-    if (type == 'nation' && id.isNotEmpty) {
-      url += '/nation/$id';
-    } else if (type == 'diocese' && id.isNotEmpty) {
-      url += '/diocese/$id';
-    }
-
-    if (year != null) {
-      url += '/$year';
-    }
-
-    final queryParams = <String, String>{};
-    if (locale != null) {
-      queryParams['locale'] = locale;
-    }
-
-    final uri = Uri.parse(url).replace(queryParameters: queryParams);
-    final response = await client.get(uri);
-
-    if (response.statusCode == 200) {
-      final jsonResponse = json.decode(response.body);
-      return LitCalResponse.fromJson(jsonResponse as Map<String, dynamic>);
-    } else {
-      throw Exception('Failed to load LitCal data');
-    }
+    final parameters = {
+      if (year != null) 'year_type': 'CIVIL',
+      if (locale != null) 'locale': locale,
+    };
+    final uri = Uri(
+      scheme: 'https',
+      host: _host,
+      pathSegments: [
+        'api',
+        'v5',
+        'calendar',
+        if ((type == 'nation' || type == 'diocese') && id.isNotEmpty) ...[
+          type,
+          id,
+        ],
+        if (year != null) year.toString(),
+      ],
+      queryParameters: parameters.isEmpty ? null : parameters,
+    );
+    return LitCalResponse.fromJson(await _get(uri));
   }
 
-  Future<Map<String, dynamic>> fetchCalendarMetadata() async {
-    const url = 'https://litcal.johnromanodorazio.com/api/v5/calendars';
-    final response = await client.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      return json.decode(response.body) as Map<String, dynamic>;
-    } else {
-      throw Exception('Failed to load calendar metadata');
-    }
-  }
+  Future<Map<String, dynamic>> fetchCalendarMetadata() =>
+      _get(Uri.https(_host, '/api/v5/calendars'));
 
   Future<List<dynamic>> fetchMissals() async {
-    const url = 'https://litcal.johnromanodorazio.com/api/v5/missals';
-    final response = await client.get(Uri.parse(url));
+    final data = await _get(Uri.https(_host, '/api/v5/missals'));
+    return data['litcal_missals'] as List<dynamic>;
+  }
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return data['litcal_missals'] as List<dynamic>;
-    } else {
-      throw Exception('Failed to load missals');
+  Future<Map<String, dynamic>> _get(Uri uri) async {
+    final response = await client.get(uri).timeout(_timeout);
+    if (response.statusCode != 200) {
+      throw http.ClientException(
+        'LitCal returned HTTP ${response.statusCode}',
+        uri,
+      );
     }
+    return jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
   }
 }

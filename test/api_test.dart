@@ -16,8 +16,7 @@ void main() {
 
       when(
         client.get(
-          Uri.parse('https://litcal.johnromanodorazio.com/api/v5/calendar')
-              .replace(queryParameters: {}),
+          Uri.parse('https://litcal.johnromanodorazio.com/api/v5/calendar'),
         ),
       ).thenAnswer(
         (_) async => http.Response(
@@ -39,8 +38,7 @@ void main() {
 
       when(
         client.get(
-          Uri.parse('https://litcal.johnromanodorazio.com/api/v5/calendar')
-              .replace(queryParameters: {}),
+          Uri.parse('https://litcal.johnromanodorazio.com/api/v5/calendar'),
         ),
       ).thenAnswer((_) async => http.Response('Not Found', 404));
 
@@ -54,13 +52,14 @@ void main() {
       final api = BibleApi(client: client);
 
       final ref = 'John 3:16';
-      final encodedRef = Uri.encodeComponent(ref);
+      final uri = Uri(
+        scheme: 'https',
+        host: 'bible-api.com',
+        pathSegments: [ref],
+        queryParameters: {'translation': 'web'},
+      );
 
-      when(
-        client.get(
-          Uri.parse('https://bible-api.com/$encodedRef?translation=web'),
-        ),
-      ).thenAnswer(
+      when(client.get(uri)).thenAnswer(
         (_) async => http.Response(
           '{"reference": "John 3:16", "text": "For God so loved the world..."}',
           200,
@@ -77,13 +76,15 @@ void main() {
       final api = BibleApi(client: client);
 
       final ref = 'Invalid 1:1';
-      final encodedRef = Uri.encodeComponent(ref);
+      final uri = Uri(
+        scheme: 'https',
+        host: 'bible-api.com',
+        pathSegments: [ref],
+        queryParameters: {'translation': 'web'},
+      );
 
-      when(
-        client.get(
-          Uri.parse('https://bible-api.com/$encodedRef?translation=web'),
-        ),
-      ).thenAnswer((_) async => http.Response('Not Found', 404));
+      when(client.get(uri))
+          .thenAnswer((_) async => http.Response('Not Found', 404));
 
       expect(() => api.fetchPassage(ref), throwsException);
     });

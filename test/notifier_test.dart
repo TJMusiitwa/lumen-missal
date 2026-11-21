@@ -44,7 +44,12 @@ void main() {
 
   test('loadTodayReading fetches data on cache miss and updates state correctly', () async {
     when(
-      mockLitCalApi.fetchTodayData(type: anyNamed('type'), id: anyNamed('id')),
+      mockLitCalApi.fetchTodayData(
+        type: anyNamed('type'),
+        id: anyNamed('id'),
+        year: anyNamed('year'),
+        locale: anyNamed('locale'),
+      ),
     ).thenAnswer((_) async {
       return LitCalResponse.fromJson({
         "litcal": {
@@ -86,7 +91,12 @@ void main() {
 
   test('loadTodayReading handles errors correctly', () async {
     when(
-      mockLitCalApi.fetchTodayData(type: anyNamed('type'), id: anyNamed('id')),
+      mockLitCalApi.fetchTodayData(
+        type: anyNamed('type'),
+        id: anyNamed('id'),
+        year: anyNamed('year'),
+        locale: anyNamed('locale'),
+      ),
     ).thenThrow(Exception('API Error'));
 
     final future = notifier.loadTodayReading();

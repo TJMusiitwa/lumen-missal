@@ -1,17 +1,22 @@
-class LitCalReadings {
-  final String? firstReading;
-  final String? responsorialPsalm;
-  final String? secondReading;
-  final String? gospelAcclamation;
-  final String? gospel;
-
-  LitCalReadings({
-    this.firstReading,
-    this.responsorialPsalm,
-    this.secondReading,
-    this.gospelAcclamation,
-    this.gospel,
-  });
+class const LitCalReadings({
+  final String? firstReading,
+  final String? responsorialPsalm,
+  final String? secondReading,
+  final String? gospelAcclamation,
+  final String? gospel,
+}) {
+  Map<String, String> get references => {
+    for (final entry in {
+      'First reading': firstReading,
+      'Responsorial psalm': responsorialPsalm,
+      'Second reading': secondReading,
+      'Gospel acclamation': gospelAcclamation,
+      'Gospel': gospel,
+    }.entries)
+      if (entry.value case final String reference
+          when reference.trim().isNotEmpty)
+        entry.key: reference.trim(),
+  };
 
   factory LitCalReadings.fromJson(Map<String, dynamic> json) {
     return LitCalReadings(
@@ -24,93 +29,50 @@ class LitCalReadings {
   }
 }
 
-class LitCalEvent {
-  final String name;
-  final List<String> color;
-  final LitCalReadings? readings;
-  final String? gradeLcl;
-  final String? gradeAbbr;
-  final String? liturgicalYear;
-  final String? liturgicalSeasonLcl;
-  final int? psalterWeek;
-  final bool isVigilMass;
-  final String? commonLcl;
-  final DateTime date;
-
-  LitCalEvent({
-    required this.name,
-    required this.color,
-    this.readings,
-    this.gradeLcl,
-    this.gradeAbbr,
-    this.liturgicalYear,
-    this.liturgicalSeasonLcl,
-    this.psalterWeek,
-    this.isVigilMass = false,
-    this.commonLcl,
-    required this.date,
-  });
-
+class const LitCalEvent({
+  required final String name,
+  required final List<String> color,
+  final LitCalReadings? readings,
+  final String? gradeLcl,
+  final String? gradeAbbr,
+  final String? liturgicalYear,
+  final String? liturgicalSeasonLcl,
+  final int? psalterWeek,
+  final bool isVigilMass = false,
+  final int grade = 0,
+  final String? commonLcl,
+  required final DateTime date,
+}) {
   factory LitCalEvent.fromJson(Map<String, dynamic> json) {
-    // Handle 'date'
-    DateTime? eventDate;
-    if (json.containsKey('date')) {
-      if (json['date'] is int) {
-        eventDate = DateTime.fromMillisecondsSinceEpoch(
-          (json['date'] as int) * 1000,
-          isUtc: true,
-        );
-      } else if (json['date'] is String) {
-        eventDate = DateTime.tryParse(json['date'] as String);
-      }
-    } else if (json.containsKey('Date')) {
-      if (json['Date'] is int) {
-        eventDate = DateTime.fromMillisecondsSinceEpoch(
-          (json['Date'] as int) * 1000,
-          isUtc: true,
-        );
-      } else if (json['Date'] is String) {
-        eventDate = DateTime.tryParse(json['Date'] as String);
-      }
-    }
-
+    final eventDate = switch (json['date'] ?? json['Date']) {
+      final int seconds => DateTime.fromMillisecondsSinceEpoch(
+        seconds * 1000,
+        isUtc: true,
+      ),
+      final String date => DateTime.tryParse(date),
+      _ => null,
+    };
     if (eventDate == null) {
-      throw Exception('Missing required field: date');
-    }
-    // Handle 'name' or 'Name'
-    String eventName =
-        json['name'] as String? ??
-        json['Name'] as String? ??
-        'Today\'s Reading';
-
-    // Handle 'color' or 'Color'
-    List<String> eventColor = [];
-    if (json.containsKey('color')) {
-      if (json['color'] is List && (json['color'] as List).isNotEmpty) {
-        eventColor = (json['color'] as List).map((c) => c.toString()).toList();
-      } else if (json['color'] is String) {
-        eventColor = [json['color'] as String];
-      }
-    } else if (json.containsKey('Color') && json['Color'] is Map) {
-      final colorMap = json['Color'] as Map;
-      if (colorMap.containsKey('option')) {
-        eventColor = [colorMap['option'] as String];
-      }
+      throw const FormatException('Invalid LitCal event date');
     }
 
-    // Handle 'readings'
-    LitCalReadings? eventReadings;
-    if (json.containsKey('readings') && json['readings'] is Map) {
-      eventReadings = LitCalReadings.fromJson(
-        json['readings'] as Map<String, dynamic>,
-      );
-    }
+    final eventColor = switch (json['color'] ?? json['Color']) {
+      final List colors => colors.cast<String>(),
+      final String color => [color],
+      {'option': final String color} => [color],
+      _ => <String>[],
+    };
+    final eventReadings = json['readings'];
 
     return LitCalEvent(
-      name: eventName,
+      name:
+          (json['name'] ?? json['Name']) as String? ?? 'Liturgical celebration',
       color: eventColor,
-      readings: eventReadings,
-      gradeLcl: json['grade_lcl'] as String?,
+      readings: eventReadings is Map<String, dynamic>
+          ? LitCalReadings.fromJson(eventReadings)
+          : null,
+      gradeLcl: (json['grade_display'] ?? json['grade_lcl']) as String?,
+      grade: json['grade'] as int? ?? 0,
       gradeAbbr: json['grade_abbr'] as String?,
       liturgicalYear: json['liturgical_year'] as String?,
       liturgicalSeasonLcl: json['liturgical_season_lcl'] as String?,
@@ -122,42 +84,55 @@ class LitCalEvent {
   }
 }
 
-class LitCalResponse {
-  final Map<String, List<LitCalEvent>> litcal;
-
-  LitCalResponse({required this.litcal});
-
+class LitCalResponse({required final Map<String, List<LitCalEvent>> litcal}) {
   factory LitCalResponse.fromJson(Map<String, dynamic> json) {
     final litCalData = json['LitCal'] ?? json['litcal'];
 
-    Map<String, List<LitCalEvent>> normalizedLitCal = {};
+    final eventsByDate = <String, List<LitCalEvent>>{};
 
-    if (litCalData is List) {
-      for (var event in litCalData) {
-        if (event is Map && event.containsKey('Date')) {
-          String dateStr = event['Date'].toString().substring(0, 10);
-          normalizedLitCal.putIfAbsent(dateStr, () => []);
-          normalizedLitCal[dateStr]!.add(
-            LitCalEvent.fromJson(event as Map<String, dynamic>),
-          );
-        }
+    void addEvent(Object? value) {
+      if (value is! Map<String, dynamic>) {
+        throw const FormatException('Invalid LitCal event');
       }
-    } else if (litCalData is Map) {
-      litCalData.forEach((key, value) {
-        if (value is List) {
-          normalizedLitCal[key] = value
-              .map((e) => LitCalEvent.fromJson(e as Map<String, dynamic>))
-              .toList();
-        } else if (value is Map) {
-          // If the values are objects with date properties, though usually in Map case, it's date -> array
-          // Fallback if needed, but standard seems to be date -> array
-          normalizedLitCal[key] = [
-            LitCalEvent.fromJson(value as Map<String, dynamic>),
-          ];
-        }
-      });
+      final event = LitCalEvent.fromJson(value);
+      (eventsByDate[litCalDateKey(event.date)] ??= []).add(event);
     }
 
-    return LitCalResponse(litcal: normalizedLitCal);
+    if (litCalData is List) {
+      litCalData.forEach(addEvent);
+    } else if (litCalData is Map) {
+      for (final value in litCalData.values) {
+        if (value is List) {
+          value.forEach(addEvent);
+        } else {
+          addEvent(value);
+        }
+      }
+    } else {
+      throw const FormatException('Missing LitCal events');
+    }
+
+    return LitCalResponse(litcal: eventsByDate);
   }
+
+  LitCalEvent? daytimeEvent(DateTime date) {
+    LitCalEvent? selected;
+    for (final event in litcal[litCalDateKey(date)] ?? <LitCalEvent>[]) {
+      // Optional memorials do not replace a weekday by default.
+      if (event.isVigilMass) continue;
+      if (selected == null || _precedence(event) > _precedence(selected)) {
+        selected = event;
+      }
+    }
+    return selected;
+  }
+
+  int _precedence(LitCalEvent event) => switch (event.grade) {
+    1 || 2 => -1,
+    _ => event.grade,
+  };
 }
+
+String litCalDateKey(DateTime date) =>
+    '${date.year}-${date.month.toString().padLeft(2, '0')}-'
+    '${date.day.toString().padLeft(2, '0')}';

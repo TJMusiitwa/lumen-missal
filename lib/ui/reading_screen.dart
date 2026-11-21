@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:material_ui/material_ui.dart';
 import 'package:lumen_missal/settings/settings_notifier.dart';
 import 'package:lumen_missal/state/calendar_notifier.dart';
@@ -78,12 +76,10 @@ class _ReadingScreenState extends State<ReadingScreen> {
             return const Center(child: Text('No readings available.'));
           }
 
-          Map<String, dynamic> readings = {};
-          try {
-            readings = json.decode(data.readingsJson) as Map<String, dynamic>;
-          } catch (e) {
-            readings = {'Error': 'Failed to parse readings json'};
-          }
+          final readings = {
+            for (final passage in data.passages)
+              passage.reference: passage.text ?? 'Passage text unavailable.',
+          };
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(20.0),

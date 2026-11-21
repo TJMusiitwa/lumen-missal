@@ -5,7 +5,8 @@ import 'connection/connection.dart' as impl;
 part 'database.g.dart';
 
 class CachedReadings extends Table {
-  TextColumn get dateKey => text()(); // YYYY-MM-DD
+  TextColumn get dateKey =>
+      text()(); // Local civil date and reading preferences
   TextColumn get title => text()();
   TextColumn get liturgicalColorName => text()();
   TextColumn get readingsJson => text()();
@@ -30,15 +31,10 @@ class AppDatabase extends _$AppDatabase {
   MigrationStrategy get migration {
     return MigrationStrategy(
       onUpgrade: (m, from, to) async {
-        if (from < 2) {
-          // Add the new columns that were added in the latest update
-          await m.addColumn(cachedReadings, cachedReadings.grade);
-          await m.addColumn(cachedReadings, cachedReadings.season);
-          await m.addColumn(cachedReadings, cachedReadings.psalterWeek);
-          await m.addColumn(cachedReadings, cachedReadings.liturgicalYear);
-        }
         if (from < 3) {
-          await m.addColumn(cachedReadings, cachedReadings.date);
+          // Old rows can contain synthetic fallback readings and are disposable.
+          await m.deleteTable(cachedReadings.actualTableName);
+          await m.createTable(cachedReadings);
         }
       },
     );
