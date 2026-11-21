@@ -270,11 +270,11 @@ class _ReadingScreenState extends State<ReadingScreen> {
               _ReadingStatus(
                 icon: Icons.menu_book_outlined,
                 heading: notifier.isLoading
-                    ? 'Checking for citations'
-                    : 'Citations unavailable',
+                    ? 'Checking for readings'
+                    : 'Readings unavailable',
                 message: notifier.isLoading
                     ? 'Looking for the readings for this celebration.'
-                    : 'LitCal hasn’t provided reading references for this celebration.',
+                    : 'There are no readings listed for this celebration.',
               )
             else ...[
               Semantics(
